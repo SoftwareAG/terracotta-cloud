@@ -1,0 +1,200 @@
+# Copyright (c) 2011-2018 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.
+# Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG.
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cluster-tool
+spec:
+  template:
+    metadata:
+      name: cluster-tool
+    spec:
+      containers:
+      - name: cluster-tool
+        image: store/softwareag/cluster-tool:10.2
+        imagePullPolicy: Always #ensure the node will always try to pull from the registry
+        args: ["configure", "-n", "MyCluster", "/configs/tc-config.xml"]
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        volumeMounts:
+        - name: config-volume
+          mountPath: /configs
+        - name: license-volume
+          mountPath: /licenses
+      volumes:
+      - name: config-volume
+        configMap:
+          name: tc-config
+      - name: license-volume
+        configMap:
+          name: license
+      restartPolicy: OnFailure
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: store-client
+  name: store-client-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: store-client
+    spec:
+      containers:
+      - image: store/softwareag/sample-tcstore-client:10.2
+        imagePullPolicy: Always #ensure the node will always try to pull from the registry
+        name: store-client
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: caching-client
+  name: caching-client-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: caching-client
+    spec:
+      containers:
+      - image: store/softwareag/sample-ehcache-client:10.2
+        imagePullPolicy: Always #ensure the node will always try to pull from the registry
+        name: caching-client
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: tmc
+  name: tmc-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tmc
+    spec:
+      containers:
+      - image: store/softwareag/tmc:10.2
+        imagePullPolicy: Always #ensure the node will always try to pull from the registry
+        name: tmc
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        ports:
+        - containerPort: 9480
+        volumeMounts:
+        - name: tmcdata
+          mountPath: /data/tmc/
+      volumes:
+        - name: tmcdata
+          hostPath:
+            path: /home/docker/tmcdata
+      restartPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: tmc
+  labels:
+    app: tmc
+spec:
+  ports:
+  - name: tmc-port
+    port: 9480
+  type: NodePort
+  selector:
+    app: tmc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: terracotta
+  labels:
+    app: terracotta
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9410
+    name: terracotta-port
+    targetPort: terracotta-port
+    protocol: TCP
+  - port: 9430
+    name: sync-port
+    targetPort: sync-port
+    protocol: TCP
+  selector:
+    app: terracotta
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: terracotta
+  name: terracotta-deployment
+spec:
+  # replica set definition
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: terracotta
+    spec:
+      hostname: terracotta
+      # pod definition
+      containers:
+      - name: terracotta
+        image: store/softwareag/terracotta-server:10.2
+        imagePullPolicy: Always #ensure the node will always try to pull from the registry
+        command: ["bin/start-tc-server.sh"]
+        args: ["-f", "/configs/tc-config.xml", "-n", "terracotta"]
+        ports:
+        - containerPort: 9410
+          name: terracotta-port
+        - containerPort: 9430
+          name: sync-port
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        volumeMounts:
+        - name: dataroots
+          mountPath: /data/dataroots
+        - name: backups
+          mountPath: /data/backups
+        - name: config-volume
+          mountPath: /configs
+      volumes:
+        - name: config-volume
+          configMap:
+            name: tc-config
+        - name: dataroots
+          hostPath:
+            path: /home/docker/dataroots
+        - name: backups
+          hostPath:
+            path: /home/docker/backups
