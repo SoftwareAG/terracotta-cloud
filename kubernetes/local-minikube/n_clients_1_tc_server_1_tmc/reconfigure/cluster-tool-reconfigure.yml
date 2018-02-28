@@ -1,0 +1,33 @@
+# Copyright (c) 2011-2018 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.
+# Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG.
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cluster-tool-reconfigure
+spec:
+  template:
+    metadata:
+      name: cluster-tool-reconfigure
+    spec:
+      containers:
+      - name: cluster-tool-reconfigure
+        image: store/softwareag/cluster-tool:10.2
+        imagePullPolicy: Always #ensure the node will always try to pull from the registry
+        args: ["reconfigure", "-n", "MyCluster", "/configs/tc-config.xml"]
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        volumeMounts:
+          - name: config-volume
+            mountPath: /configs
+          - name: license-volume
+            mountPath: /licenses
+      volumes:
+          - name: config-volume
+            configMap:
+              name: tc-config
+          - name: license-volume
+            configMap:
+              name: license
+      restartPolicy: OnFailure
