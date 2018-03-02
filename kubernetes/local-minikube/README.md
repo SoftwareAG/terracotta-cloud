@@ -212,3 +212,31 @@ If you go back to the TMC, monitoring page, you'll see the offheap increased fro
     backups  dataroots  tmcdata
     $(minikube) sudo rm -rf backups/ dataroots/ tmcdata/
 
+## Appendix D : 2 stripes cluster
+
+For that one, I *strongly* recommend you to increase the memory size for your Minikube VM
+
+    minikube stop
+    Stopping local Kubernetes cluster...
+    Machine stopped.
+
+    minikube start --cpus 2 --memory 8192
+    Starting local Kubernetes v1.9.0 cluster...
+
+In case the setting was not applied to your already existing Minikube, you can still open the VirtualBox UI and change the RAM to 8192 when Minikube is stopped
+
+You can keep the license ConfigMap from before, but you'll need to create a new ConfigMap for the 2 stripes configuration.
+
+    kubectl create configmap tc-configs --from-file=kubernetes/local-minikube/n_clients_4_tc_server_1_tmc/stripe1.xml --from-file=kubernetes/local-minikube/n_clients_4_tc_server_1_tmc/stripe2.xml
+
+Then, it's time to deploy Terracotta DB
+
+    kubectl create -f kubernetes/local-minikube/n_clients_4_tc_server_1_tmc/n_clients_4_tc_server_1_tmc.yaml
+
+Or, if you use images from another registry :
+
+    sed  -e  "s|store/softwareag/|$IMAGE_PREFIX/|g" -e "s|:10.2|:$TAG|g"  kubernetes/local-minikube/n_clients_4_tc_server_1_tmc/n_clients_4_tc_server_1_tmc.yaml | kubectl create -f -
+
+To open up the TMC page, just issue this command :
+
+    minikube service tmc
