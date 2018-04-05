@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: cluster-tool
-        image: store/softwareag/cluster-tool:10.2
+        image: store/softwareag/terracotta-cluster-tool:10.2
         args: ["configure", "-n", "MyCluster", "/configs/stripe1.xml", "/configs/stripe2.xml"]
         env:
         - name: ACCEPT_EULA

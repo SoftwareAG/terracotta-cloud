@@ -54,7 +54,7 @@ After logging in to [Docker Store](https://store.docker.com/) (if you already ha
 
 - [Terracotta Server](https://store.docker.com/images/softwareag-terracotta-server)
 - [Terracotta Management Console](https://store.docker.com/images/softwareag-tmc)
-- [Cluster Tool](https://store.docker.com/images/softwareag-cluster-tool)
+- [Cluster Tool](https://store.docker.com/images/softwareag-terracotta-cluster-tool)
 - [Sample Ehcache Client](https://store.docker.com/images/softwareag-sample-ehcache-client)
 - [Sample Terracotta Store Client](https://store.docker.com/images/softwareag-sample-tcstore-client)
 
