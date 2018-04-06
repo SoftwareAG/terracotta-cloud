@@ -1,4 +1,4 @@
-# Set up Terracota DB on AWS, using Kops
+# Set up Terracotta DB on AWS, using Kops
 
 What this document will help you accomplish:
 --------------------------------------------
