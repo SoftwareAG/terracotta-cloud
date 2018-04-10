@@ -1,0 +1,90 @@
+# Copyright (c) 2011-2018 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.
+# Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG.
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: tmc-pv-local
+spec:
+  capacity:
+    storage: 4Gi
+  storageClassName: "tmc-local"
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /data/tmc
+    type: DirectoryOrCreate
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: dataroots-pv-local
+spec:
+  capacity:
+    storage: 30Gi
+  storageClassName: "dataroots-local"
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /data/dataroots
+    type: DirectoryOrCreate
+
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: backups-pv-local
+spec:
+  capacity:
+    storage: 20Gi
+  storageClassName: "backups-local"
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /data/backups
+    type: DirectoryOrCreate
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tmc-pvc-local
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: "tmc-local"
+  resources:
+    requests:
+      storage: 4Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dataroots-pvc-local
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: "dataroots-local"
+  resources:
+    requests:
+      storage: 30Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backups-pvc-local
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: "backups-local"
+  resources:
+    requests:
+      storage: 20Gi
