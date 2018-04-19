@@ -50,13 +50,10 @@ Or you can of course use ```kubectl``` :
 ## Logging in to Docker Store
 
 Terracotta DB images are distributed via Docker Store.
-After logging in to [Docker Store](https://store.docker.com/) (if you already have a DockerHub account, you can use the same credentials), go and "Proceed to Checkout" for the 5 following Docker images :
 
-- [Terracotta Server](https://store.docker.com/images/softwareag-terracotta-server)
-- [Terracotta Management Console](https://store.docker.com/images/softwareag-tmc)
-- [Cluster Tool](https://store.docker.com/images/softwareag-terracotta-cluster-tool)
-- [Sample Ehcache Client](https://store.docker.com/images/softwareag-sample-ehcache-client)
-- [Sample Terracotta Store Client](https://store.docker.com/images/softwareag-sample-tcstore-client)
+In a web browser, go to the [TerracottaDB page on Docker Store](https://store.docker.com/images/softwareag-terracottadb)  and then "Proceed to checkout"
+
+![alt text](terracottadb-on-docker-store.png "Checkout TerracottaDB on Docker Store")
 
 Once this is done, you need to [login to the Docker Store from Minikube](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-secret-in-the-cluster-that-holds-your-authorization-token) :
 
