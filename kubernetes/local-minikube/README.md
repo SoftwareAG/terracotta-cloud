@@ -53,7 +53,7 @@ Terracotta DB images are distributed via Docker Store.
 
 In a web browser, go to the [TerracottaDB page on Docker Store](https://store.docker.com/images/softwareag-terracottadb)  and then "Proceed to checkout"
 
-![alt text](terracottadb-on-docker-store.png "Checkout TerracottaDB on Docker Store")
+![alt text](https://raw.githubusercontent.com/SoftwareAG/terracotta-db-cloud/master/kubernetes/screenshots/terracottadb-on-docker-store.png "Checkout TerracottaDB on Docker Store")
 
 Once this is done, you need to [login to the Docker Store from Minikube](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-secret-in-the-cluster-that-holds-your-authorization-token) :
 
