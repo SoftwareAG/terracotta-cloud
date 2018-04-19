@@ -109,13 +109,10 @@ Once you're done with your cluster, don't forget to delete all AWS resources :
 ## Logging in to Docker Store
 
 Terracotta DB images are distributed via Docker Store.
-After logging in to [Docker Store](https://store.docker.com/) (if you already have a DockerHub account, you can use the same credentials), go and "Proceed to Checkout" for the 5 following Docker images :
 
-- [Terracotta Server](https://store.docker.com/images/softwareag-terracotta-server)
-- [Terracotta Management Console](https://store.docker.com/images/softwareag-tmc)
-- [Cluster Tool](https://store.docker.com/images/softwareag-terracotta-cluster-tool)
-- [Sample Ehcache Client](https://store.docker.com/images/softwareag-sample-ehcache-client)
-- [Sample Terracotta Store Client](https://store.docker.com/images/softwareag-sample-tcstore-client)
+In a web browser, go to the [TerracottaDB page on Docker Store](https://store.docker.com/images/softwareag-terracottadb)  and then "Proceed to checkout"
+
+![alt text](https://raw.githubusercontent.com/SoftwareAG/terracotta-db-cloud/master/kubernetes/screenshots/terracottadb-on-docker-store.png "Checkout TerracottaDB on Docker Store")
 
 Once this is done, you need to pass your credentials to kubectl, and store them as a secret :
 
@@ -131,7 +128,7 @@ To make sure minikube can properly pull from Docker Store, you can try and apply
     spec:
       containers:
         - name: test-terracotta-server-pull
-          image: store/softwareag/terracotta-server-oss:5.3
+          image: store/softwareag/terracotta-server:10.2
           imagePullPolicy: Always
           command: [ "echo", "SUCCESS" ]
       imagePullSecrets:
@@ -149,8 +146,6 @@ To make sure everything went fine, give it some time and read the describe outpu
       Type     Reason                 Age                 From               Message
       ----     ------                 ----                ----               -------
       Normal   Scheduled              16m                 default-scheduler  Successfully assigned pull-images to minikube
-      Normal   Pulling                14m (x2 over 16m)   kubelet, minikube  pulling image "store/softwareag/tmc:10.2"
-      Normal   Pulled                 14m (x2 over 14m)   kubelet, minikube  Successfully pulled image "store/softwareag/tmc:10.2"
       Normal   Pulling                14m (x3 over 16m)   kubelet, minikube  pulling image "store/softwareag/terracotta-server:10.2"
       Normal   Pulled                 14m (x3 over 16m)   kubelet, minikube  Successfully pulled image "store/softwareag/terracotta-server:10.2"
 

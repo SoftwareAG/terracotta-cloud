@@ -72,10 +72,6 @@ To make sure minikube can properly pull from Docker Store, you can try and apply
           image: store/softwareag/terracotta-server:10.2
           imagePullPolicy: Always
           command: [ "echo", "SUCCESS" ]
-        - name: test-tmc-pull
-          image: store/softwareag/tmc:10.2
-          imagePullPolicy: Always
-          command: [ "echo", "SUCCESS" ]
       imagePullSecrets:
        - name: regcred
     EOF
@@ -91,8 +87,6 @@ To make sure everything went fine, give it some time and read the describe outpu
       Type     Reason                 Age                 From               Message
       ----     ------                 ----                ----               -------
       Normal   Scheduled              16m                 default-scheduler  Successfully assigned pull-images to minikube
-      Normal   Pulling                14m (x2 over 16m)   kubelet, minikube  pulling image "store/softwareag/tmc:10.2"
-      Normal   Pulled                 14m (x2 over 14m)   kubelet, minikube  Successfully pulled image "store/softwareag/tmc:10.2"
       Normal   Pulling                14m (x3 over 16m)   kubelet, minikube  pulling image "store/softwareag/terracotta-server:10.2"
       Normal   Pulled                 14m (x3 over 16m)   kubelet, minikube  Successfully pulled image "store/softwareag/terracotta-server:10.2"
 
