@@ -4,4 +4,4 @@
 
  * [on premise](on-premise/),
  * [AWS with Kops](aws-kops/),
- * [or local deployment with Minikube](local-minkube/)
+ * [or local deployment with Minikube](local-minikube/)
