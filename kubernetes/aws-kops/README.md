@@ -177,7 +177,7 @@ Each claim will create an EBS volume automatically, since, by default kops uses 
 
 That said, if you're using and EFS volume for backups (see appendix), don't forget to create a persistent volume for it :
 
-    kubectl create -f kubernetes/aws-kops/persistent-volumes.yaml
+    kubectl create -f kubernetes/aws-kops/backups-persistent-volumes-and-claims.yaml
 
 With configs, license and storage, you're ready to go :
 
