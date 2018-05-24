@@ -31,12 +31,12 @@
     </service>
   </plugins>
   <servers>
-    <server host="terracotta-1-1" name="terracotta-1-1" bind="0.0.0.0">
+    <server host="terracotta-1-0.stripe-1" name="terracotta-1-0" bind="0.0.0.0">
       <logs>/opt/softwareag/terracotta/server/conf/stdout:</logs>
       <tsa-port bind="0.0.0.0">9410</tsa-port>
       <tsa-group-port bind="0.0.0.0">9430</tsa-group-port>
     </server>
-    <server host="terracotta-1-2" name="terracotta-1-2" bind="0.0.0.0">
+    <server host="terracotta-1-1.stripe-1" name="terracotta-1-1" bind="0.0.0.0">
       <logs>/opt/softwareag/terracotta/server/conf/stdout:</logs>
       <tsa-port bind="0.0.0.0">9410</tsa-port>
       <tsa-group-port bind="0.0.0.0">9430</tsa-group-port>
