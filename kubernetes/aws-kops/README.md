@@ -165,21 +165,16 @@ We suggest you to first export two environment variables, and use sed to replace
 
 ## Creating the Terracotta cluster
 
-First, you need to create the config maps for the configuration files and the license :
+First, you need to create the config maps for the license :
 
-    kubectl create configmap tc-configs --from-file=./kubernetes/aws-kops/stripe1.xml --from-file=./kubernetes/aws-kops/stripe2.xml
     kubectl create configmap license --from-file=./license.xml
 
-Also, you need storage for your dataroots - we'll use EBS - and since EBS is the kops default storage, you just need to create the Persistent Volume Claims.
-Each claim will create an EBS volume automatically, since, by default kops uses EBS as a back end for the claims.
-
-    kubectl create -f kubernetes/aws-kops/dataroots-persistent-volumes-claims.yaml
-
-That said, if you're using and EFS volume for backups (see appendix), don't forget to create a persistent volume for it :
+If you're using EFS volume for backups (see appendix), un-comment the backups `volumes/volumeMounts` in `kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml` 
+and create a persistent volume and corresponding persistent volume claim for it:
 
     kubectl create -f kubernetes/aws-kops/backups-persistent-volumes-and-claims.yaml
 
-With configs, license and storage, you're ready to go :
+With license and storage, you're ready to go :
 
     kubectl apply -f kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml
 
