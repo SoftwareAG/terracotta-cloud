@@ -497,6 +497,14 @@ spec:
                 operator: In
                 values:
                 - clientnodes
+      initContainers:
+        - name: init-configured
+          image: store/softwareag/terracotta-cluster-tool:10.2
+          imagePullPolicy: Always
+          args: ["status", "-n", "MyCluster", "-s", "terracotta-1-0.stripe-1", "-s", "terracotta-1-1.stripe-1", "-s", "terracotta-2-0.stripe-2", "-s", "terracotta-2-1.stripe-2"]
+          env:
+          - name: ACCEPT_EULA
+            value: "Y"
       containers:
         - image: store/softwareag/sample-tcstore-client:10.2
           name: store-client
@@ -542,6 +550,14 @@ spec:
                 operator: In
                 values:
                 - clientnodes
+      initContainers:
+        - name: init-configured
+          image: store/softwareag/terracotta-cluster-tool:10.2
+          imagePullPolicy: Always
+          args: ["status", "-n", "MyCluster", "-s", "terracotta-1-0.stripe-1", "-s", "terracotta-1-1.stripe-1", "-s", "terracotta-2-0.stripe-2", "-s", "terracotta-2-1.stripe-2"]
+          env:
+          - name: ACCEPT_EULA
+            value: "Y"
       containers:
         - image: store/softwareag/sample-ehcache-client:10.2
           name: caching-client
