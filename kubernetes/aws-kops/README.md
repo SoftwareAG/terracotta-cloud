@@ -11,9 +11,9 @@ What this document will help you accomplish:
 Prerequisites:
 --------------
 
-- Install kubectl (>=1.8) on your laptop (https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+- Install kubectl (>=1.9) on your laptop (https://kubernetes.io/docs/tasks/tools/install-kubectl/).
 
-- Install kops (>=1.8.1) on your laptop (https://github.com/kubernetes/kops)
+- Install kops (>=1.9.1) on your laptop (https://github.com/kubernetes/kops)
 
 - Optionally, you can install the AWS cli (for advanced set up, such as EFS volume creation) (https://aws.amazon.com/cli/)
 
@@ -33,7 +33,7 @@ After you have created an AWS user with its key, password, and gave it the neces
     #replace ca-central-1a with the closest AWS location
     export AWS_ZONE=ca-central-1a
     # create the cluster configuration, with default master and 4 large nodes, for the tc servers
-    kops create cluster --zones ${AWS_ZONE} ${NAME} --node-count=4 --node-size=m4.2xlarge
+    kops create cluster --zones --name ${AWS_ZONE} ${NAME} --node-count=4 --node-size=m4.2xlarge
     # create an additionnal instance group, a group of nodes for the clients
     kops create ig --name=${NAME} --subnet ${AWS_ZONE}  clientnodes --edit
     # you'll be prompted to provide the clientnodes group specification, use this :
@@ -94,12 +94,14 @@ should return :
 
 
 ### Kubernetes dashboard
-A nice tool is the dashboard, it's easy to set up :
+A nice tool is the [dashboard](https://github.com/kubernetes/dashboard), it's easy to set up :
 
-    kubectl create -f https://raw.githubusercontent.com/kubernetes/kops/master/addons/kubernetes-dashboard/v1.8.1.yaml
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
     kubectl proxy
 
 And then open this url : http://localhost:8001/ui
+
+You may need to setup authorization to access the dashboard, please [read the official documentation](https://github.com/kubernetes/dashboard/wiki/Creating-sample-user)
 
 ### DANGER ZONE !
 Once you're done with your cluster, don't forget to delete all AWS resources :
@@ -165,21 +167,11 @@ We suggest you to first export two environment variables, and use sed to replace
 
 ## Creating the Terracotta cluster
 
-First, you need to create the config maps for the configuration files and the license :
+First, you need to create the config maps for the license :
 
-    kubectl create configmap tc-configs --from-file=./kubernetes/aws-kops/stripe1.xml --from-file=./kubernetes/aws-kops/stripe2.xml
     kubectl create configmap license --from-file=./license.xml
 
-Also, you need storage for your dataroots - we'll use EBS - and since EBS is the kops default storage, you just need to create the Persistent Volume Claims.
-Each claim will create an EBS volume automatically, since, by default kops uses EBS as a back end for the claims.
-
-    kubectl create -f kubernetes/aws-kops/dataroots-persistent-volumes-claims.yaml
-
-That said, if you're using and EFS volume for backups (see appendix), don't forget to create a persistent volume for it :
-
-    kubectl create -f kubernetes/aws-kops/backups-persistent-volumes-and-claims.yaml
-
-With configs, license and storage, you're ready to go :
+You're now ready to go :
 
     kubectl apply -f kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml
 
@@ -333,6 +325,15 @@ Make sure you're mounting the file system properly using a persistent volume and
           volumeMounts:
             - name: persistent-storage
               mountPath: "/usr/share/nginx/html/"
+
+You'll finally need to un-comment the backups `volumes/volumeMounts` in `kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml`
+and create a persistent volume and corresponding persistent volume claim for it:
+
+    kubectl create -f kubernetes/aws-kops/backups-persistent-volumes-and-claims.yaml
+
+And redeploy your workload :
+
+    kubectl apply -f kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml
 
 ## Appendix D : publish your images to ECR
 

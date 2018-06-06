@@ -13,7 +13,7 @@ spec:
       containers:
       - name: cluster-tool-backup
         image: store/softwareag/terracotta-cluster-tool:10.2
-        args: ["backup", "-n", "MyCluster", "-s", "terracotta-1-1:9410", "-s", "terracotta-1-2:9410", "-s", "terracotta-2-1:9410", "-s", "terracotta-2-2:9410"]
+        args: ["backup", "-n", "MyCluster", "-s", "terracotta-1-0.stripe-1", "-s", "terracotta-1-1.stripe-1", "-s", "terracotta-2-0.stripe-2", "-s", "terracotta-2-1.stripe-2"]
         env:
         - name: ACCEPT_EULA
           value: "Y"
