@@ -99,7 +99,7 @@ A nice tool is the [dashboard](https://github.com/kubernetes/dashboard), it's ea
     kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
     kubectl proxy
 
-And then open this url : http://localhost:8001/ui
+And then open this url : [http://localhost:8001/ui](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login)
 
 You may need to setup authorization to access the dashboard, please [read the official documentation](https://github.com/kubernetes/dashboard/wiki/Creating-sample-user)
 
