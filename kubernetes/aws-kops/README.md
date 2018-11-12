@@ -35,7 +35,7 @@ After you have created an AWS user with its key, password, and gave it the neces
     #replace ca-central-1a with the closest AWS location
     export AWS_ZONE=ca-central-1a
     # create the cluster configuration, with default master and 4 large nodes, for the tc servers
-    kops create cluster --zones --name ${AWS_ZONE} ${NAME} --node-count=4 --node-size=m4.2xlarge
+    kops create cluster --zones ${AWS_ZONE} --name ${NAME} --node-count=4 --node-size=m4.2xlarge
     # create an additionnal instance group, a group of nodes for the clients
     kops create ig --name=${NAME} --subnet ${AWS_ZONE}  clientnodes --edit
     # you'll be prompted to provide the clientnodes group specification, use this :
@@ -132,7 +132,7 @@ To make sure minikube can properly pull from Docker Store, you can try and apply
     spec:
       containers:
         - name: test-terracotta-server-pull
-          image: store/softwareag/terracotta-server:10.2
+          image: store/softwareag/terracotta-server:10.3
           imagePullPolicy: Always
           command: [ "echo", "SUCCESS" ]
       imagePullSecrets:
@@ -150,8 +150,8 @@ To make sure everything went fine, give it some time and read the describe outpu
       Type     Reason                 Age                 From               Message
       ----     ------                 ----                ----               -------
       Normal   Scheduled              16m                 default-scheduler  Successfully assigned pull-images to minikube
-      Normal   Pulling                14m (x3 over 16m)   kubelet, minikube  pulling image "store/softwareag/terracotta-server:10.2"
-      Normal   Pulled                 14m (x3 over 16m)   kubelet, minikube  Successfully pulled image "store/softwareag/terracotta-server:10.2"
+      Normal   Pulling                14m (x3 over 16m)   kubelet, minikube  pulling image "store/softwareag/terracotta-server:10.3"
+      Normal   Pulled                 14m (x3 over 16m)   kubelet, minikube  Successfully pulled image "store/softwareag/terracotta-server:10.3"
 
 You can now delete this pod :
 
@@ -164,7 +164,7 @@ We suggest you to first export two environment variables, and use sed to replace
 
     export IMAGE_PREFIX=my.own.registry:443/terracotta
     export TAG=latest
-    sed  -e  "s|store/softwareag/|$IMAGE_PREFIX/|g" -e "s|:10.2|:$TAG|g"  kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml | kubectl apply -f -
+    sed  -e  "s|store/softwareag/|$IMAGE_PREFIX/|g" -e "s|:10.3|:$TAG|g"  kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml | kubectl apply -f -
 
 
 ## Creating the Terracotta cluster
@@ -334,7 +334,7 @@ Make sure you're mounting the file system properly using a persistent volume and
 You'll finally need to un-comment the backups `volumes/volumeMounts` in `kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml`
 and create a persistent volume and corresponding persistent volume claim for it:
 
-    kubectl create -f kubernetes/aws-kops/backups-persistent-volumes-and-claims.yaml
+    kubectl create -f kubernetes/aws-kops/persistent-volumes-sample-config/backups-persistent-volumes-and-claims.yaml
 
 And redeploy your workload :
 
@@ -364,7 +364,7 @@ Set a few environment variables now :
     export AWS_ECR_URL=xxxxx.dkr.ecr.ca-central-1.amazonaws.com
     # in case you'll use just 1 repository to store all your terracotta images
     export DOCKER_STORE_SAG=store/softwareag
-    export TERRACOTTA_TAG=10.2
+    export TERRACOTTA_TAG=10.3
 
 First, you'll need to pull all the images locally :
 
@@ -393,7 +393,7 @@ Now you can edit the existing deployment scripts with:
 
     export IMAGE_PREFIX=xxxxx.dkr.ecr.ca-central-1.amazonaws.com
     export TAG=latest
-    sed  -e  "s|store/softwareag/|$IMAGE_PREFIX/|g" -e "s|:10.2|:$TAG|g"  kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml | kubectl apply -f -
+    sed  -e  "s|store/softwareag/|$IMAGE_PREFIX/|g" -e "s|:10.3|:$TAG|g"  kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml | kubectl apply -f -
 
 
 ## Appendix E : Using Local or NFS volumes for storage
