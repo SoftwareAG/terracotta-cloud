@@ -21,7 +21,7 @@
     <plugins>
         <config>
             <ohr:offheap-resources xmlns:data="http://www.terracottatech.com/config/data-roots" xmlns:ohr="http://www.terracotta.org/config/offheap-resource">
-                <ohr:resource name="offheap-1" unit="MB">512</ohr:resource>
+                <ohr:resource name="offheap-1" unit="MB">920</ohr:resource>
                 <ohr:resource name="offheap-2" unit="MB">256</ohr:resource>
             </ohr:offheap-resources>
         </config>
@@ -38,7 +38,7 @@
         </service>
     </plugins>
     <servers>
-        <server host="terracotta" name="terracotta">
+        <server host="terracotta-0.terracotta" name="terracotta-0">
             <tsa-port>9410</tsa-port>
             <tsa-group-port>9430</tsa-group-port>
         </server>

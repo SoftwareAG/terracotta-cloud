@@ -26,15 +26,13 @@ Prerequisites:
 
 Let's start minikube :
 
-    minikube start --cpus 2 --memory 4096
+    minikube start --cpus 2 --memory 8192
 
 If you plan on using images from an internal registry with self signed certificates, you can use the option : ```--insecure-registry "my.internal.registry.sag:443"```
 
 A nice tool is the dashboard, it's also easy to set up :
 
     minikube dashboard
-
-You can now check your Kubernetes "cluster" out in the dashboard : http://192.168.99.100:30000/#!/overview?namespace=default
 
 Or you can of course use ```kubectl``` :
 
@@ -98,14 +96,13 @@ You can now delete this pod :
 
 ## Creating the Terracotta cluster Single server, 1 TMC, 1 caching client and 1 store client
 
-First, you need to create the config maps for the config files and the license :
+First, you need to create the config map for the license :
 
-    kubectl create configmap tc-config --from-file=kubernetes/local-minikube/n_clients_1_tc_server_1_tmc/tc-config.xml
     kubectl create configmap license --from-file=./license.xml
 
 With the terracotta configuration and the license, you're ready to go :
 
-    kubectl create -f kubernetes/local-minikube/n_clients_1_tc_server_1_tmc/n_clients_1_tc_server_1_tmc.yaml
+    kubectl create -f kubernetes/local-minikube/n_clients_1_tc_server_1_tmc.yaml
 
 To open up the TMC page, just issue this command :
 
@@ -121,23 +118,14 @@ We suggest you to first export two environment variables, and use sed to replace
 
 ### Clean things up :
 
-    kubectl delete -f kubernetes/local-minikube/n_clients_1_tc_server_1_tmc/n_clients_1_tc_server_1_tmc.yaml
-
-
-## Appendix A : local volumes stored on Minikube VM disk
-
-The Terracotta Server and the TMC images both define volumes, but the example deployment file does not configure them.
-That means Minikube will mount them to its local filesystem by default.
-If you ever need to clean up your Minikube instance, follow those instructions to reclaim some disk space :
-
+    kubectl delete -f kubernetes/local-minikube/n_clients_1_tc_server_1_tmc.yaml
     minikube ssh
-    $(minikube) docker volume prune
-    WARNING! This will remove all volumes not used by at least one container.
-    Are you sure you want to continue? [y/N] y
-    $(minikube) exit
+    $(minikube) ls
+    backups  dataroots  tmcdata
+    $(minikube) sudo rm -rf backups/ dataroots/ tmcdata/
 
 
-## Appendix B : Minikube addons
+## Appendix A : Minikube addons
 
 You can list, enable or disable addons, such as the dashboard :
 
@@ -145,35 +133,21 @@ You can list, enable or disable addons, such as the dashboard :
     minikube addons disable dashboard
     minikube addons enable dashboard
 
-## Appendix C : Reconfigure the cluster
+## Appendix B : Reconfigure the cluster
 
-To be able to reconfigure the cluster, you need the Terracotta server to keep its state, in other words, you need to mount the same dataroot volume across restarts.
-We are providing you with another deployment file, that just does that : mounting the volumes for the TMC and the Terracotta Server to a known Minikube location : kubernetes/local-minikube/n_clients_1_tc_server_1_tmc/n_clients_1_tc_server_1_tmc-mounted.yaml
+After verifying your cluster is fine (minikube service tmc for example), you can replace the existing tc-confg configmap with the updated configuration file :
 
-    kubectl create -f kubernetes/local-minikube/n_clients_1_tc_server_1_tmc/n_clients_1_tc_server_1_tmc-mounted.yaml
-
-or :
-
-    sed  -e  "s|store/softwareag/|$IMAGE_PREFIX/|g" -e "s|:10.2|:$TAG|g"  kubernetes/local-minikube/n_clients_1_tc_server_1_tmc/n_clients_1_tc_server_1_tmc-mounted.yaml | kubectl create -f -
-
-After verifying your cluster is fine (minikube service tmc for example), you can delete the existing configmap :
-
-     kubectl delete configmap tc-config
-      configmap "tc-config" deleted
-
-And recreate it from the update configuration file :
-
-    kubectl create configmap tc-config --from-file=kubernetes/local-minikube/n_clients_1_tc_server_1_tmc/reconfigure/tc-config.xml
-     configmap "tc-config" created
+    kubectl create configmap tc-config --from-file=kubernetes/local-minikube/reconfigure/tc-config.xml \
+        --dry-run -o yaml | kubectl replace -f -
 
  Now create and deploy your cluster tool reconfigure job :
 
-    kubectl create -f kubernetes/local-minikube/n_clients_1_tc_server_1_tmc/reconfigure/cluster-tool-reconfigure.yml
+    kubectl create -f kubernetes/local-minikube/reconfigure/cluster-tool-reconfigure.yml
      job "cluster-tool-reconfigure" created
 
 If necessary, feed kubectl via sed :
 
-    sed  -e  "s|store/softwareag/|$IMAGE_PREFIX/|g" -e "s|:10.2|:$TAG|g"    kubernetes/local-minikube/n_clients_1_tc_server_1_tmc/reconfigure/cluster-tool-reconfigure.yml | kubectl create -f -
+    sed  -e  "s|store/softwareag/|$IMAGE_PREFIX/|g" -e "s|:10.2|:$TAG|g"    kubernetes/local-minikube/reconfigure/cluster-tool-reconfigure.yml | kubectl create -f -
 
 
 Make sure it run properly :
@@ -186,48 +160,22 @@ Make sure it run properly :
 
 And then, restart your terracotta server :
 
-    kubectl delete pod terracotta-deployment-79b5cb5898-8cb7g
-    pod "terracotta-deployment-79b5cb5898-8cb7g" deleted
+    kubectl delete pod terracotta-0
+    pod "terracotta-0" deleted
 
-Destroying the pod will force Kubernetes to re schedule it, since a deployment with a replicaset is configured.
+Destroying the pod will force Kubernetes to re schedule it, since a statefulset is configured.
 
 If you go back to the TMC, monitoring page, you'll see the offheap increased from 512MB to 920 MB
 
 ### Clean things up :
 
-    kubectl delete -f kubernetes/local-minikube/n_clients_1_tc_server_1_tmc/n_clients_1_tc_server_1_tmc.yaml
-    kubectl delete configmap tc-config
-    kubectl delete -f kubernetes/local-minikube/n_clients_1_tc_server_1_tmc/reconfigure/cluster-tool-reconfigure.yml
+    kubectl delete -f kubernetes/local-minikube/n_clients_1_tc_server_1_tmc.yaml
+    kubectl delete -f kubernetes/local-minikube/reconfigure/cluster-tool-reconfigure.yml
     minikube ssh
     $(minikube) ls
     backups  dataroots  tmcdata
     $(minikube) sudo rm -rf backups/ dataroots/ tmcdata/
 
-## Appendix D : 2 stripes cluster
+### Going further
 
-For that one, I *strongly* recommend you to increase the memory size for your Minikube VM
-
-    minikube stop
-    Stopping local Kubernetes cluster...
-    Machine stopped.
-
-    minikube start --cpus 2 --memory 8192
-    Starting local Kubernetes v1.9.0 cluster...
-
-In case the setting was not applied to your already existing Minikube, you can still open the VirtualBox UI and change the RAM to 8192 when Minikube is stopped
-
-You can keep the license ConfigMap from before, but you'll need to create a new ConfigMap for the 2 stripes configuration.
-
-    kubectl create configmap tc-configs --from-file=kubernetes/local-minikube/n_clients_4_tc_server_1_tmc/stripe1.xml --from-file=kubernetes/local-minikube/n_clients_4_tc_server_1_tmc/stripe2.xml
-
-Then, it's time to deploy Terracotta DB
-
-    kubectl create -f kubernetes/local-minikube/n_clients_4_tc_server_1_tmc/n_clients_4_tc_server_1_tmc.yaml
-
-Or, if you use images from another registry :
-
-    sed  -e  "s|store/softwareag/|$IMAGE_PREFIX/|g" -e "s|:10.2|:$TAG|g"  kubernetes/local-minikube/n_clients_4_tc_server_1_tmc/n_clients_4_tc_server_1_tmc.yaml | kubectl create -f -
-
-To open up the TMC page, just issue this command :
-
-    minikube service tmc
+Have a look at [the other examples](../aws-kops/)

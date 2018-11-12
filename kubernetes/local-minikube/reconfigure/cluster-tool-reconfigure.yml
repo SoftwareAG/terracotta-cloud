@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: cluster-tool-reconfigure
-        image: store/softwareag/terracotta-cluster-tool:10.2
+        image: store/softwareag/terracotta-cluster-tool:10.3
         imagePullPolicy: Always #ensure the node will always try to pull from the registry
         args: ["reconfigure", "-n", "MyCluster", "/configs/tc-config.xml"]
         env:
@@ -44,3 +44,5 @@ spec:
             configMap:
               name: license
       restartPolicy: OnFailure
+      imagePullSecrets:
+      - name: regcred
