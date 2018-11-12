@@ -1,11 +1,11 @@
-# Set up Terracotta DB on AWS, using Kops
+# Set up Terracotta DB on a Kubernetes cluster (set up with AWS Kops or other)
 
 What this document will help you accomplish:
 --------------------------------------------
 
-- Set up a Kubernetes cluster on AWS, using kops
+- Set up a Kubernetes cluster on AWS, using kops (optional, could with AWS with EKS, or even on premise)
 
-- Deploy Terracotta DB on a Kubernetes cluster, running on AWS, using kops (with 2x2 Terracotta Servers - 2 stripes with 2 nodes each, n sample Ehcache3 clients, n sample Terracotta Store clients, and 1 Terracotta Management Console)
+- Deploy Terracotta DB on a Kubernetes cluster (with 2x2 Terracotta Servers - 2 stripes with 2 nodes each, n sample Ehcache3 clients, n sample Terracotta Store clients, and 1 Terracotta Management Console)
 
 
 Prerequisites:
@@ -24,6 +24,8 @@ Prerequisites:
 
 ## Getting started : set up a Kubernetes cluster on AWS, with kops
 
+You can skip this step if you already have a Kubernetes cluster ready. Just make sure that your kubernetes cluster has enough worker nodes with enough CPU and RAM.
+
 We recommend you to first read the up to date kops documentation  : https://github.com/kubernetes/kops/blob/master/docs/aws.md
 
 After you have created an AWS user with its key, password, and gave it the necessary rights, you can create a s3 store to hold your kops configuration, and get started :
@@ -33,7 +35,7 @@ After you have created an AWS user with its key, password, and gave it the neces
     #replace ca-central-1a with the closest AWS location
     export AWS_ZONE=ca-central-1a
     # create the cluster configuration, with default master and 4 large nodes, for the tc servers
-    kops create cluster --zones --name ${AWS_ZONE} ${NAME} --node-count=4 --node-size=m4.2xlarge
+    kops create cluster --zones ${AWS_ZONE} --name ${NAME} --node-count=4 --node-size=m4.2xlarge
     # create an additionnal instance group, a group of nodes for the clients
     kops create ig --name=${NAME} --subnet ${AWS_ZONE}  clientnodes --edit
     # you'll be prompted to provide the clientnodes group specification, use this :
@@ -99,7 +101,7 @@ A nice tool is the [dashboard](https://github.com/kubernetes/dashboard), it's ea
     kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
     kubectl proxy
 
-And then open this url : http://localhost:8001/ui
+And then open this url : [http://localhost:8001/ui](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/login)
 
 You may need to setup authorization to access the dashboard, please [read the official documentation](https://github.com/kubernetes/dashboard/wiki/Creating-sample-user)
 
@@ -110,7 +112,7 @@ Once you're done with your cluster, don't forget to delete all AWS resources :
 
 ## Logging in to Docker Store
 
-Terracotta DB images are distributed via Docker Store.
+Terracotta DB images are distributed via Docker Store; but if the images are stored on another registry, you can skip that part.
 
 In a web browser, go to the [TerracottaDB page on Docker Store](https://store.docker.com/images/softwareag-terracottadb)  and then "Proceed to checkout"
 
@@ -130,7 +132,7 @@ To make sure minikube can properly pull from Docker Store, you can try and apply
     spec:
       containers:
         - name: test-terracotta-server-pull
-          image: store/softwareag/terracotta-server:10.2
+          image: store/softwareag/terracotta-server:10.3
           imagePullPolicy: Always
           command: [ "echo", "SUCCESS" ]
       imagePullSecrets:
@@ -148,21 +150,21 @@ To make sure everything went fine, give it some time and read the describe outpu
       Type     Reason                 Age                 From               Message
       ----     ------                 ----                ----               -------
       Normal   Scheduled              16m                 default-scheduler  Successfully assigned pull-images to minikube
-      Normal   Pulling                14m (x3 over 16m)   kubelet, minikube  pulling image "store/softwareag/terracotta-server:10.2"
-      Normal   Pulled                 14m (x3 over 16m)   kubelet, minikube  Successfully pulled image "store/softwareag/terracotta-server:10.2"
+      Normal   Pulling                14m (x3 over 16m)   kubelet, minikube  pulling image "store/softwareag/terracotta-server:10.3"
+      Normal   Pulled                 14m (x3 over 16m)   kubelet, minikube  Successfully pulled image "store/softwareag/terracotta-server:10.3"
 
 You can now delete this pod :
 
     kubectl delete -f test-pull.yaml
     pod "pull-images" deleted
 
-### If you're not using the images from Docker Store
+## If you're not using the images from Docker Store
 In case you have pushed the images to a cloud registry (AWS ECR, GCP Container Registry, etc. ), you'll want to pull your images from another location than Docker Store.
 We suggest you to first export two environment variables, and use sed to replace the image names before sending the deployment file to kubectl
 
     export IMAGE_PREFIX=my.own.registry:443/terracotta
     export TAG=latest
-    sed  -e  "s|store/softwareag/|$IMAGE_PREFIX/|g" -e "s|:10.2|:$TAG|g"  kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml | kubectl apply -f -
+    sed  -e  "s|store/softwareag/|$IMAGE_PREFIX/|g" -e "s|:10.3|:$TAG|g"  kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml | kubectl apply -f -
 
 
 ## Creating the Terracotta cluster
@@ -177,6 +179,9 @@ You're now ready to go :
 
 Now head to the dashboard, look for Services and click on the TMC link; you're about to monitor your cluster !
 
+## Destroying the Terracotta cluster
+
+    kubectl delete -f kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml
 
 ## Appendix A : pod assignation policies
 
@@ -329,7 +334,7 @@ Make sure you're mounting the file system properly using a persistent volume and
 You'll finally need to un-comment the backups `volumes/volumeMounts` in `kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml`
 and create a persistent volume and corresponding persistent volume claim for it:
 
-    kubectl create -f kubernetes/aws-kops/backups-persistent-volumes-and-claims.yaml
+    kubectl create -f kubernetes/aws-kops/persistent-volumes-sample-config/backups-persistent-volumes-and-claims.yaml
 
 And redeploy your workload :
 
@@ -359,7 +364,7 @@ Set a few environment variables now :
     export AWS_ECR_URL=xxxxx.dkr.ecr.ca-central-1.amazonaws.com
     # in case you'll use just 1 repository to store all your terracotta images
     export DOCKER_STORE_SAG=store/softwareag
-    export TERRACOTTA_TAG=10.2
+    export TERRACOTTA_TAG=10.3
 
 First, you'll need to pull all the images locally :
 
@@ -383,3 +388,67 @@ After you have locally pulled the Terracotta images from the storeag them and pu
     docker push $AWS_ECR_URL/sample-tcstore-client:$TERRACOTTA_TAG
     docker push $AWS_ECR_URL/sample-ehcache-client:$TERRACOTTA_TAG
     docker push $AWS_ECR_URL/terracotta-cluster-tool:$TERRACOTTA_TAG
+
+Now you can edit the existing deployment scripts with:
+
+    export IMAGE_PREFIX=xxxxx.dkr.ecr.ca-central-1.amazonaws.com
+    export TAG=latest
+    sed  -e  "s|store/softwareag/|$IMAGE_PREFIX/|g" -e "s|:10.3|:$TAG|g"  kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml | kubectl apply -f -
+
+
+## Appendix E : Using Local or NFS volumes for storage
+
+First, make sure you have created the license and tc-configs ConfigMaps.
+
+Then, have a look at the file named : ```kubernetes/aws-kops/persistent-volumes-sample-config/persistent_volumes_and_claims-nfs.yaml``` , and feel free to change the path and NFS server coordinates; also make sure the NFS shares already exist !
+
+Now run the following command to provision the Persistent Volume and Persistent Volume Claims :
+
+    kubectl create -f ./kubernetes/aws-kops/persistent-volumes-sample-config/persistent_volumes_and_claims-nfs.yaml
+
+Before deploying the cluster, in the file named ```./kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml```
+
+              volumeMounts:
+                - name: tmcdata
+                  mountPath: /data/tmc/
+      volumeClaimTemplates:
+        - metadata:
+            name: tmcdata
+          spec:
+            accessModes: [ "ReadWriteOnce" ]
+            resources:
+              requests:
+                storage: 100Gi
+
+with :
+
+              volumeMounts:
+              - name: tmcdata
+                mountPath: /data/tmc
+            volumes:
+              - name: tmcdata
+                persistentVolumeClaim:
+                    claimName: tmc-pvc-nfs
+            restartPolicy: Always
+
+You'll need to do that for dataroots and backups as well (3 PVs and 3 PVCs to rely on)
+
+And then, deploy the cluster :
+
+     kubectl apply -f ./kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml
+
+
+## Appendix F : binding containers to hosts
+
+If you chose to use local (to the worker nodes) Persistent Volumes, you may want to make sure the pods "stick" to the same worker nodes.
+In that case, you can use affinity to require pods to run exclusively on a given worker node.
+
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "kubernetes.io/hostname"
+                operator: In
+                values:
+                - k8s-worker-node-002.sag

@@ -175,7 +175,7 @@ spec:
                 - nodes
       containers:
         - name: terracotta
-          image: store/softwareag/terracotta-server:10.2
+          image: store/softwareag/terracotta-server:10.3
           command: ["bin/start-tc-server.sh"]
           args: ["-f", "/configs/stripe1.xml", "-n", "$(POD_NAME)"]
           imagePullPolicy: Always
@@ -202,7 +202,7 @@ spec:
 #            - name: backups
 #              mountPath: /data/backups
         - name: readiness
-          image: store/softwareag/terracotta-cluster-tool:10.2
+          image: store/softwareag/terracotta-cluster-tool:10.3
           command: ["sh", "-c", "while true; do sleep 86400; done"]
           imagePullPolicy: Always
           readinessProbe:
@@ -297,7 +297,7 @@ spec:
                 - nodes
       containers:
         - name: terracotta
-          image: store/softwareag/terracotta-server:10.2
+          image: store/softwareag/terracotta-server:10.3
           command: ["bin/start-tc-server.sh"]
           args: ["-f", "/configs/stripe2.xml", "-n", "$(POD_NAME)"]
           imagePullPolicy: Always
@@ -324,7 +324,7 @@ spec:
 #            - name: backups
 #              mountPath: /data/backups
         - name: readiness
-          image: store/softwareag/terracotta-cluster-tool:10.2
+          image: store/softwareag/terracotta-cluster-tool:10.3
           command: ["sh", "-c", "while true; do sleep 86400; done"]
           imagePullPolicy: Always
           readinessProbe:
@@ -382,7 +382,7 @@ spec:
                 - clientnodes
       containers:
         - name: cluster-tool
-          image: store/softwareag/terracotta-cluster-tool:10.2
+          image: store/softwareag/terracotta-cluster-tool:10.3
           args: ["configure", "-n", "MyCluster", "/configs/stripe1.xml", "/configs/stripe2.xml"]
           env:
           - name: ACCEPT_EULA
@@ -462,7 +462,7 @@ spec:
                 values:
                 - clientnodes
       containers:
-        - image: store/softwareag/tmc:10.2
+        - image: store/softwareag/tmc:10.3
           name: tmc
           imagePullPolicy: Always
           env:
@@ -515,14 +515,14 @@ spec:
                 - clientnodes
       initContainers:
         - name: init-configured
-          image: store/softwareag/terracotta-cluster-tool:10.2
+          image: store/softwareag/terracotta-cluster-tool:10.3
           imagePullPolicy: Always
           args: ["status", "-n", "MyCluster", "-s", "terracotta-1-0.stripe-1", "-s", "terracotta-1-1.stripe-1", "-s", "terracotta-2-0.stripe-2", "-s", "terracotta-2-1.stripe-2"]
           env:
           - name: ACCEPT_EULA
             value: "Y"
       containers:
-        - image: store/softwareag/sample-tcstore-client:10.2
+        - image: store/softwareag/sample-tcstore-client:10.3
           name: store-client
           imagePullPolicy: Always
           env:
@@ -568,14 +568,14 @@ spec:
                 - clientnodes
       initContainers:
         - name: init-configured
-          image: store/softwareag/terracotta-cluster-tool:10.2
+          image: store/softwareag/terracotta-cluster-tool:10.3
           imagePullPolicy: Always
           args: ["status", "-n", "MyCluster", "-s", "terracotta-1-0.stripe-1", "-s", "terracotta-1-1.stripe-1", "-s", "terracotta-2-0.stripe-2", "-s", "terracotta-2-1.stripe-2"]
           env:
           - name: ACCEPT_EULA
             value: "Y"
       containers:
-        - image: store/softwareag/sample-ehcache-client:10.2
+        - image: store/softwareag/sample-ehcache-client:10.3
           name: caching-client
           imagePullPolicy: Always
           env:
