@@ -1,0 +1,257 @@
+# Copyright © 2018 Software AG, Darmstadt, Germany and/or its licensors
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: stripe-1
+  labels:
+    app: stripe-1
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  ports:
+    - name: terracotta-port
+      port: 9410
+    - name: sync-port
+      port: 9430
+  clusterIP: None
+  selector:
+    app: stripe-1
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: terracotta-1
+spec:
+  selector:
+    matchLabels:
+      app: stripe-1
+  serviceName: stripe-1
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: stripe-1
+    spec:
+      terminationGracePeriodSeconds: 10
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                    - stripe-1
+                    - stripe-2
+              topologyKey: kubernetes.io/hostname
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#              - matchExpressions:
+#                  - key: terracotta
+#                    operator: In
+#                    values:
+#                      - server
+      containers:
+        - name: terracotta
+          image: store/softwareag/terracotta-server:10.3
+          command: ["bin/start-tc-server.sh"]
+          args: ["-f", "/configs/stripe1.xml", "-n", "$(POD_NAME)"]
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: 15Gi
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          ports:
+            - containerPort: 9410
+              name: terracotta-port
+            - containerPort: 9430
+              name: sync-port
+          volumeMounts:
+            - name: config-volume
+              mountPath: /configs
+            - name: tcdata
+              mountPath: /data/dataroots
+#            - name: backups
+#              mountPath: /data/backups
+        - name: readiness
+          image: store/softwareag/terracotta-cluster-tool:10.3
+          command: ["sh", "-c", "while true; do sleep 86400; done"]
+          imagePullPolicy: Always
+          readinessProbe:
+            exec:
+              command: ["bash", "-c", "bin/cluster-tool.sh status -s ${POD_NAME}.stripe-1"]
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 5
+            # 10,000 as failure threshold gives around 41 hours of time to load from FRS and start terracotta successfully.
+            failureThreshold: 10000
+          env:
+          - name: ACCEPT_EULA
+            value: "Y"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: config-volume
+          configMap:
+            name: tc-configs
+#        - name: backups
+#          persistentVolumeClaim:
+#            claimName: backups-volume-claim
+  volumeClaimTemplates:
+    - metadata:
+        name: tcdata
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 50Gi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: stripe-2
+  labels:
+    app: stripe-2
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  ports:
+    - name: terracotta-port
+      port: 9410
+    - name: sync-port
+      port: 9430
+  clusterIP: None
+  selector:
+    app: stripe-2
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: terracotta-2
+spec:
+  selector:
+    matchLabels:
+      app: stripe-2
+  serviceName: stripe-2
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: stripe-2
+    spec:
+      terminationGracePeriodSeconds: 10
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                    - stripe-1
+                    - stripe-2
+              topologyKey: kubernetes.io/hostname
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#              - matchExpressions:
+#                  - key: terracotta
+#                    operator: In
+#                    values:
+#                      - server
+      containers:
+        - name: terracotta
+          image: store/softwareag/terracotta-server:10.3
+          command: ["bin/start-tc-server.sh"]
+          args: ["-f", "/configs/stripe2.xml", "-n", "$(POD_NAME)"]
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: 15Gi
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          ports:
+            - containerPort: 9410
+              name: terracotta-port
+            - containerPort: 9430
+              name: sync-port
+          volumeMounts:
+            - name: config-volume
+              mountPath: /configs
+            - name: tcdata
+              mountPath: /data/dataroots
+#            - name: backups
+#              mountPath: /data/backups
+        - name: readiness
+          image: store/softwareag/terracotta-cluster-tool:10.3
+          command: ["sh", "-c", "while true; do sleep 86400; done"]
+          imagePullPolicy: Always
+          readinessProbe:
+            exec:
+              command: ["bash", "-c", "bin/cluster-tool.sh status -s ${POD_NAME}.stripe-2"]
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 5
+            # 10,000 as failure threshold gives around 41 hours of time to load from FRS and start terracotta successfully.
+            failureThreshold: 10000
+          env:
+          - name: ACCEPT_EULA
+            value: "Y"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: config-volume
+          configMap:
+            name: tc-configs
+#        - name: backups
+#          persistentVolumeClaim:
+#            claimName: backups-volume-claim
+  volumeClaimTemplates:
+    - metadata:
+        name: tcdata
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 50Gi
