@@ -244,12 +244,12 @@ Let's verify it looks like this :
 On the 2 servers nodes (tc-k8s-001, tc-k8s-002), let's create a folder that will host our Terracotta FRS persistence :
 
     ssh anthony@tc-k8s-001
-    mkdir /data/tcdata-A
-    mkdir /data/tcdata-B
+    mkdir /data/tcdata-a
+    mkdir /data/tcdata-b
     
     ssh anthony@tc-k8s-002
-    mkdir /data/tcdata-C
-    mkdir /data/tcdata-D
+    mkdir /data/tcdata-c
+    mkdir /data/tcdata-d
  
     
 On the TMC worker node :
@@ -257,7 +257,7 @@ On the TMC worker node :
     ssh anthony@tc-k8s-005
     mkdir /data/tmcdata
 
-Now, you can follow the regular instructions to deploy the workloads; make sure though to use /Users/adah/workspaces/terracotta-db-cloud/kubernetes/aws-kops/local-storage/scale-up/tc-servers-deployment-and-service-2-for-each-node.yaml to deploy the servers
+Now, you can follow the regular instructions to deploy the workloads; make sure though to use scale-up/tc-servers-deployment-and-service-2-for-each-node.yaml to deploy the servers
 
 ###Time to scale out
 
@@ -265,29 +265,42 @@ If you want to increase offheap size, and current worker nodes can't provide eno
 
 First, you need to reconfigure the offheap sizes to the target size; let's imagine we want to change offheap-1 from 8 GB to 16 GB
 
-    ??? kubectl apply -f kubernetes/aws-kops/local-storage/scale-up/tc-servers-configmap.yaml
-    ??? cluster tool reconfigure
+    $ kubectl apply -f kubernetes/local-storage/scale-up/tc-servers-configmap.yaml
+    $ kubectl apply -f kubernetes/local-storage/scale-up/cluster-tool-reconfigure-job.yaml
 
 Then, you need to scale down each stripe to 1 member only (that will let only 1 Active in each stripe running)
 
-    ??? kubectl scale=1
+    $ kubectl scale statefulset --replicas=1 terracotta-1
+    statefulset.apps/terracotta-1 scaled
+    $ kubectl scale statefulset --replicas=1 terracotta-2
+    statefulset.apps/terracotta-1 scaled
 
-It's time to copy the data of the 2 lost passives into the new nodes; in the following situation :
 
-    get pvc, get pv
+It's time to copy the data of the 2 lost passives into the new nodes; in my example situation, terracotta-1-1 (attached to volume tcdata-c) and terracotta-2-1 (attached to volume tcdata-b) were brought down
+
+    $ kubectl get pvc
+    NAME                    STATUS   VOLUME     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+    tcdata-terracotta-1-0   Bound    tcdata-a   50Gi       RWO            fast-disks     16h
+    tcdata-terracotta-1-1   Bound    tcdata-c   50Gi       RWO            fast-disks     16h
+    tcdata-terracotta-2-0   Bound    tcdata-d   50Gi       RWO            fast-disks     16h
+    tcdata-terracotta-2-1   Bound    tcdata-b   50Gi       RWO            fast-disks     16h
+    tmcdata-tmc-0           Bound    tmcdata    20Gi       RWO            fast-disks     15h
     
-we want to reschedule terracotta-1-1 (attached to terracotta-b) and terracotta-2-1 (attached to terracotta-d) to the new nodes tc-k8s-003 and tc-k8s-004.
+we want to reschedule terracotta-1-1 and terracotta-2-1 to the new nodes tc-k8s-003 and tc-k8s-004.
 
 Let's move the needed storage to the new nodes :
 
-    scp ...    
+     $ ssh anthony@tc-k8s-002.eur.ad.sag
+     $ scp -r /data/tcdata-c/ anthony@tc-k8s-004:/data/tcdata-c
+     $ ssh anthony@tc-k8s-001.eur.ad.sag    
+     $ scp -r /data/tcdata-b/ anthony@tc-k8s-003:/data/tcdata-b
 
-Then, you'll need to make sure you have 2 worker nodes available, and then you'll need to update the labels, to have something similar to this :
+Then, you'll need to make sure you have 2 new worker nodes available, and then you'll need to update the labels, to have something similar to this :
 
-    kubectl label nodes tc-k8s-001 terracotta-a=
-    kubectl label nodes tc-k8s-002 terracotta-b=
-    kubectl label nodes tc-k8s-003 terracotta-c=
-    kubectl label nodes tc-k8s-004 terracotta-d=
+    kubectl label nodes tc-k8s-004 terracotta-c=
+    kubectl label nodes tc-k8s-003 terracotta-b=
+    kubectl label nodes tc-k8s-001 terracotta-b-
+    kubectl label nodes tc-k8s-002 terracotta-c-
 
 Hint : to remove a label, you can simply use (pay attention to the "-" and not "=") :
 
@@ -296,12 +309,12 @@ Hint : to remove a label, you can simply use (pay attention to the "-" and not "
 
 Apply the following manifest to have the passives restarted on their new nodes; they should reload from disk the previous data we just copied.
 
-    kubectl apply -f kubernetes/aws-kops/local-storage/tc-servers-deployment-and-service-on-premise.yaml
+    kubectl apply -f kubernetes/local-storage/scale-up/tc-servers-deployment-and-service-2-for-each-node.yaml
 
 Final step : restarting the servers that never got restarted since the reconfiguration; locate them (they should be the active servers) and kill their pods :
 
-    kubectl delete -f terracotta-1-?
-    kubectl delete -f terracotta-2-?
+    kubectl delete pod terracotta-1-0
+    kubectl delete pod terracotta-2-0
             
 Kubernetes will automatically reschedule them on their previous nodes.
 
