@@ -82,8 +82,6 @@ We suggest you to first export two environment variables, and use sed to replace
 
     export IMAGE_PREFIX=my.own.registry:443/terracotta
     export TAG=latest
-    export IMAGE_PREFIX=daerepository03.eur.ad.sag:4443/terracotta
-    export TAG=10.3.1.0.91
     sed  -e  "s|store/softwareag/|$IMAGE_PREFIX/|g" -e "s|:10.3|:$TAG|g"  kubernetes/aws-kops/n_clients_4_tc_server_1_tmc.yaml | kubectl apply -f -
 
 
@@ -290,9 +288,9 @@ we want to reschedule terracotta-1-1 and terracotta-2-1 to the new nodes tc-k8s-
 
 Let's move the needed storage to the new nodes :
 
-     $ ssh anthony@tc-k8s-002.eur.ad.sag
+     $ ssh anthony@tc-k8s-002
      $ scp -r /data/tcdata-c/ anthony@tc-k8s-004:/data/tcdata-c
-     $ ssh anthony@tc-k8s-001.eur.ad.sag    
+     $ ssh anthony@tc-k8s-001  
      $ scp -r /data/tcdata-b/ anthony@tc-k8s-003:/data/tcdata-b
 
 Then, you'll need to make sure you have 2 new worker nodes available, and then you'll need to update the labels, to have something similar to this :
