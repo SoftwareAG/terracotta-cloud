@@ -5,12 +5,11 @@ metadata:
 spec:
   capacity:
     storage: 20Gi
-  volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
-  storageClassName: fast-disks
-  local:
+  hostPath:
     path: /data/tmcdata
+    type: ""
   nodeAffinity:
     required:
       nodeSelectorTerms:

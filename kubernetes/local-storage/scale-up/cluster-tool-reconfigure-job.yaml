@@ -10,7 +10,7 @@ spec:
       containers:
         - name: cluster-tool-reconfigure
           image: store/softwareag/terracotta-cluster-tool:10.3
-          args: ["configure", "-n", "MyCluster", "/configs/stripe1.xml", "/configs/stripe2.xml"]
+          args: ["reconfigure", "-n", "MyCluster", "/configs/stripe1.xml", "/configs/stripe2.xml"]
           env:
             - name: ACCEPT_EULA
               value: "Y"

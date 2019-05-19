@@ -134,13 +134,13 @@ On the TMC worker node :
 
 Now, let's tell Kubernetes to use local disks as the default storage class
 
-    kubectl apply -f kubernetes/aws-kops/local-storage/storageclass.yaml
+    kubectl apply -f kubernetes/local-storage/storageclass.yaml
     storageclass.storage.k8s.io/fast-disks configured
     
 And let's create the persistent volumes that will be used during deployment :
 
-    kubectl apply -f kubernetes/aws-kops/local-storage/tc-pv.yaml
-    kubectl apply -f kubernetes/aws-kops/local-storage/tmc-pv.yaml
+    kubectl apply -f kubernetes/local-storage/tc-pv.yaml
+    kubectl apply -f kubernetes/local-storage/tmc-pv.yaml
             
 
 ## Creating the Terracotta cluster
@@ -151,7 +151,7 @@ First, you need to create the configmap for the license :
 
 And then, you need to submit the configuration for the Terracotta servers :
 
-    kubectl apply -f kubernetes/aws-kops/local-storage/tc-servers-configmap.yaml
+    kubectl apply -f kubernetes/local-storage/tc-servers-configmap.yaml
 
 You should be all set configuration wise :
 
@@ -164,7 +164,7 @@ You should be all set configuration wise :
 
 You're now ready to go :
 
-    kubectl apply -f kubernetes/aws-kops/local-storage/tc-servers-deployment-and-service-on-premise.yaml
+    kubectl apply -f kubernetes/local-storage/tc-servers-deployment-and-service-on-premise.yaml
     
 After few minutes, your Terracotta servers pods should all be running : 
 
@@ -191,30 +191,6 @@ We have conveniently provided some sample client applications for you to try thi
     kubectl apply -f kubernetes/aws-kops/local-storage/store-client-deployment.yaml
             
 
-## Moving a Terracotta server to another worker node
-
-* scale down the stripe (for example terracotta-1 stateful set) to 1.
-* Identify which PVC terracotta-1-1 was using 
-
-    kubectl get pvc
-    tcdata-terracotta-1-1   Bound    tcdata-a   50Gi       RWO            fast-disks     19h
-    
-* ssh to the node that provided the volume (for example tc-k8s-001)
-* copy its persisted data to the new node (for example tc-k8s-005)
-    
-    scp -r /data/tcdata-a/ anthony@tc-k8s-005:/data/tcdata-a
-
-* unlabel tc-k8s-001   
-    
-    kubectl label nodes tc-k8s-001 terracotta-a-
-
-* label tc-k8s-005
-
-    kubectl label nodes tc-k8s-005 terracotta-a=
-    
-* scale up the stripe to 2
-* done !
-
 ## Starting with 2 worker nodes and spreading to 4 workers nodes during scale up
 
 With TerracottaDB, you can safely run 2 stripes with 1 Active, 1 Passive each using only 2 worker nodes (making sure only 1 server of each stripe runs on the same node)
@@ -228,7 +204,7 @@ Let's starting labelling the nodes for local storage
     kubectl label nodes tc-k8s-001 terracotta-a=
     kubectl label nodes tc-k8s-001 terracotta-b=
     kubectl label nodes tc-k8s-002 terracotta-c=
-    kubectl label nodes tc-k8s-003 terracotta-d=
+    kubectl label nodes tc-k8s-002 terracotta-d=
     kubectl label nodes tc-k8s-005 terracotta=tmc
 
 Let's verify it looks like this :
@@ -255,9 +231,9 @@ On the TMC worker node :
     ssh anthony@tc-k8s-005
     mkdir /data/tmcdata
 
-Now, you can follow the regular instructions to deploy the workloads; make sure though to use scale-up/tc-servers-deployment-and-service-2-for-each-node.yaml to deploy the servers
+Now, you can follow the regular instructions to deploy the workloads; make sure though to use kubernetes/local-storage/scale-up/tc-servers-deployment-and-service-2-for-each-node.yaml to deploy the servers
 
-###Time to scale out
+### Time to scale out
 
 If you want to increase offheap size, and current worker nodes can't provide enough memory, then you can reconfigure your tc servers before relocating them to their own nodes.
 
@@ -307,7 +283,7 @@ Hint : to remove a label, you can simply use (pay attention to the "-" and not "
 
 Apply the following manifest to have the passives restarted on their new nodes; they should reload from disk the previous data we just copied.
 
-    kubectl apply -f kubernetes/local-storage/scale-up/tc-servers-deployment-and-service-2-for-each-node.yaml
+    kubectl apply -f kubernetes/local-storage/tc-servers-deployment-and-service-2-for-each-node.yaml
 
 Final step : restarting the servers that never got restarted since the reconfiguration; locate them (they should be the active servers) and kill their pods :
 
