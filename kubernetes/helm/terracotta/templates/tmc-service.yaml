@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Release.Name }}-tmc"
+  labels:
+    app: "{{ .Release.Name }}-tmc"
+    chart: {{ template "terracotta.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/actuator/prometheus'
+spec:
+  type: LoadBalancer
+  ports:
+    - name: tmc-port
+      port: 9480
+  selector:
+    app: "{{ .Release.Name }}-tmc"
+    release: "{{ .Release.Name }}"

@@ -1,10 +1,12 @@
 # Terracotta
 
-The [Terracotta 5.x OSS](http://www.terracotta.org/) offering includes the following:
+The [Terracotta 10.x enterprise](http://www.terracotta.org/) offering includes the following:
 
  *  Ehcache 3.x compatibility
+ *  TC Store compatibility
  *  Distributed In-Memory Data Management with fault-tolerance via Terracotta Server (1 stripe – active with optional mirror)
  *  In memory off-heap storage - take advantage of all the RAM in your server
+ *  Fast Restartable Store - persist to disk in memory data across restarts 
 
 
 ## Quick Start
@@ -15,7 +17,7 @@ $ helm install stable/terracotta
 
 ## Introduction
 
-This chart bootstraps a [Terracotta server](https://github.com/Terracotta-OSS/docker) deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+This chart bootstraps a [Terracotta cluster](https://hub.docker.com/_/softwareag-terracottadb) deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Prerequisites
 
@@ -43,38 +45,25 @@ $ helm delete my-release
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
-## Configuration
-
-The following table lists the configurable parameters of the Terracotta chart and their default values.
-
-| Parameter                                  | Description                                                                                                    | Default                                              |
-|--------------------------------------------|----------------------------------------------------------------------------------------------------------------|------------------------------------------------------|
-| `image.repository`                         | Terracotta Image name                                                                                          | `terracotta/terracotta-server-oss`                   |
-| `image.tag`                                | Terracotta Image tag                                                                                           | `{VERSION}`                                          |
-| `image.pullPolicy`                         | Image pull policy                                                                                              | `Always`                                             |
-| `replicaCount`                             | Number of Terracotta members                                                                                   | 2                                                    |
-| `offheaps`                                 | Offheap resource defintions, as a list of {name, size, unit}                                                   | `[{offheap-1, 512, MB}, {offheap-2, 256, MB}]`       |
-| `nodeSelector`                             | Terracotta Node labels for pod assignment                                                                      | `nil`                                                |
-| `resources`                                | CPU/Memory resource requests/limits                                                                            | `nil`                                                |
-| `service.type`                             | Kubernetes service type ('ClusterIP', 'LoadBalancer', or 'NodePort')                                           | `ClusterIP`                                          |
-| `service.clusterIP`                        | Kubernetes service ClusterIP                                                                                   | `None`                                               |
-| `service.terracottaPort`                   | Kubernetes main service port                                                                                   | `9410`                                               |
-| `service.syncPort`                         | Kubernetes sync service port                                                                                   | `9430`                                               |
-
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```bash
-$ helm install --name my-release \
-  --set replicaCount=3  --set offheaps[0].name=otherOffheap --set offheaps[0].unit=GB --set offheaps[0].size=6 \
-    stable/terracotta
+$ helm install  --name=my-cluster \ 
+  --namespace=terracotta \ 
+  --set tag=10.3.1-SNAPSHOT \ 
+  --set serverImage.repository=myrepo:443/terracotta/terracotta-server \ 
+  --set clusterToolImage.repository=myrepo:443/terracotta/terracotta-cluster-tool \
+  --set tmcImage.repository=myrepo:443/terracotta/tmc \ 
+  --set sampleEhCacheImage.repository=myrepo:443/terracotta/sample-ehcache-client \  
+  --set sampleTcStoreImage.repository=myrepo:443/terracotta/sample-tcstore-client \ 
+  --set-file licenseFile=~/Downloads/TerracottaDB101.xml    terracotta/
 ```
 
-The above command sets number of Terracotta nodes to 3, and it defines just 1 offheap resource named otherOffheap, 6 GB large
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 
 ```bash
-$ helm install --name my-release -f values.yaml stable/terracotta
+$ helm install --name my-release -f values.yaml terracotta/
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
