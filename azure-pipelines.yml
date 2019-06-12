@@ -9,9 +9,9 @@ steps:
     action: 'Run an image'
     imageName: 'alpine/helm'
     volumes: |
-      $(build.sourcesDirectory):/cloud-stuff/helm/terracotta
-      $(build.binariesDirectory):/cloud-stuff/helm/terracotta
-    containerCommand: 'sh -x -c "cd /cloud-stuff/helm/terracotta && helm package . && helm repo index ."'
+      $(build.sourcesDirectory):/cloud-stuff/in
+      $(build.binariesDirectory):/cloud-stuff/out
+    containerCommand: 'sh -x -c "cd /cloud-stuff/in/kubernetes/helm/terracotta && helm package . && helm repo index ."'
     detached: false
 - bash: |
     git checkout github_pages
