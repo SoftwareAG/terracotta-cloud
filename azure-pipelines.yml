@@ -1,0 +1,20 @@
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: Docker@0
+  displayName: 'Generate helm package and index.yaml'
+  inputs:
+    containerRegistryType: 'Container Registry'
+    action: 'Run an image'
+    imageName: 'alpine/helm'
+    volumes: |
+      $(build.sourcesDirectory):/cloud-stuff/helm/terracotta
+      $(build.binariesDirectory):/cloud-stuff/helm/terracotta
+    containerCommand: 'sh -x -c "cd /cloud-stuff/helm/terracotta && helm package . && helm repo index ."'
+    detached: false
+- bash: |
+    git checkout github_pages
+    git add index.yaml *.tar.gz
+    git commit -a -m "Update repo"
+  displayName: 'Commit Helm Charts'
