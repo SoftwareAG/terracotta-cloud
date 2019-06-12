@@ -2,6 +2,12 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- task: YodLabs.VariableTasks.SetVariablesWithCredentials.SetVariablesWithCredentials@0
+  displayName: 'Github auth'
+  inputs:
+    ConnectionName: gh-push-tc-org
+    userNameVarName: U
+    passwordVarName: P
 - task: Docker@0
   displayName: 'Generate helm package and index.yaml'
   inputs:
