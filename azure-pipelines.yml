@@ -11,7 +11,7 @@ steps:
     volumes: |
       $(build.sourcesDirectory):/cloud-stuff/in
       $(build.binariesDirectory):/cloud-stuff/out
-    containerCommand: 'sh -c "cd /cloud-stuff/in/kubernetes/helm/terracotta && helm package . && helm repo index ."'
+    containerCommand: 'cd /cloud-stuff/in/kubernetes/helm/terracotta && helm package . && helm repo index .'
     detached: false
 - bash: |
     git checkout github_pages
