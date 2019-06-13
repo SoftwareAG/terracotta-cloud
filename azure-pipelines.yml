@@ -9,16 +9,25 @@ steps:
     userNameVarName: U
     passwordVarName: P
 - task: Docker@0
-  displayName: 'Generate helm package and index.yaml'
+  displayName: 'Generate helm package'
   inputs:
     containerRegistryType: 'Container Registry'
     action: 'Run an image'
     imageName: 'alpine/helm'
     volumes: |
-      $(build.sourcesDirectory):/cloud-stuff/in
-      $(build.binariesDirectory):/cloud-stuff/out
-    containerCommand: 'ls ; pwd ; ls /cloud-stuff ; ls /cloud-stuff/in ; ls /cloud-stuff/in/kubernetes ; cd /cloud-stuff/in/kubernetes/helm/terracotta && ls && helm package . && helm repo index .'
+      $(build.sourcesDirectory)/kubernetes/helm/terracotta:/apps
+    containerCommand: 'helm package .'
     detached: false
+- task: Docker@0
+  displayName: 'Generate helm index.yaml'
+  inputs:
+    containerRegistryType: 'Container Registry'
+    action: 'Run an image'
+    imageName: 'alpine/helm'
+    volumes: |
+      $(build.sourcesDirectory)/kubernetes/helm/terracotta:/apps
+    containerCommand: 'helm repo index .'
+    detached: false    
 - bash: |
     git checkout github_pages
     git add index.yaml *.tar.gz
