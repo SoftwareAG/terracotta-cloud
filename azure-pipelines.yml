@@ -9,9 +9,9 @@ steps:
     userNameVarName: U
     passwordVarName: P
 - bash: |
-  pwd
-  ls -l $(build.sourcesDirectory)
-  ls -l $(build.sourcesDirectory)/kubernetes/helm/terracotta
+    pwd
+    ls -l $(build.sourcesDirectory)
+    ls -l $(build.sourcesDirectory)/kubernetes/helm/terracotta
 - task: Docker@0
   displayName: 'Generate helm package'
   inputs:
