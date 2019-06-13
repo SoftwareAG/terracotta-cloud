@@ -33,6 +33,7 @@ steps:
     containerCommand: 'repo index .'
     detached: false    
 - bash: |
+    git status
     mv $(build.sourcesDirectory)/kubernetes/helm/terracotta/*.* ./
     git checkout gh-pages
     git add index.yaml *.tar.gz
