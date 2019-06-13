@@ -35,7 +35,7 @@ steps:
 - bash: |
     git status
     mv $(build.sourcesDirectory)/kubernetes/helm/terracotta/*.* ./
-    git checkout gh-pages
+    git checkout -f gh-pages
     git add index.yaml *.tar.gz
     git commit -a -m "Update repository with latest helm chart"
   displayName: 'Commit Helm Charts'
