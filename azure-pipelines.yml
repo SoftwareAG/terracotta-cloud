@@ -33,13 +33,19 @@ steps:
     containerCommand: 'repo index .'
     detached: false    
 - bash: |
+
+    gh_url="https://$U:$P@github.com/SoftwareAG/terracotta-cloud.git"
+    gh_branch=gh-pages
+    gh_source="#${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}"
+    
     git config --local user.name "autogen"
     git config --local user.email "autogen-noreply@no-reply.softwareag.com"
+
     mv $(build.sourcesDirectory)/kubernetes/helm/terracotta/*.* ./
     git status
     git checkout -f gh-pages
     git add index.yaml *.tgz
     git status
-    git commit -a -m "Update repository with latest helm chart"
-    git push origin gh-pages
+    git commit -m "Update repository with latest helm chart from ${gh_source} ${COMMIT}"
+    git push $gh_url $gh_branch
   displayName: 'Commit Helm Charts'
