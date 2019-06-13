@@ -33,7 +33,8 @@ steps:
     containerCommand: 'repo index .'
     detached: false    
 - bash: |
-    git checkout github_pages
+    mv $(build.sourcesDirectory)/kubernetes/helm/terracotta/*.* ./
+    git checkout gh-pages
     git add index.yaml *.tar.gz
-    git commit -a -m "Update repo"
+    git commit -a -m "Update repository with latest helm chart"
   displayName: 'Commit Helm Charts'
