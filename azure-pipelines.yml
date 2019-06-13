@@ -13,6 +13,16 @@ steps:
     ls -l $(build.sourcesDirectory)
     ls -l $(build.sourcesDirectory)/kubernetes/helm/terracotta
 - task: Docker@0
+  displayName: 'Init helm'
+  inputs:
+    containerRegistryType: 'Container Registry'
+    action: 'Run an image'
+    imageName: 'alpine/helm'
+    volumes: |
+      $(build.sourcesDirectory)/kubernetes/helm/terracotta:/apps
+    containerCommand: 'helm init .'
+    detached: false
+- task: Docker@0
   displayName: 'Generate helm package'
   inputs:
     containerRegistryType: 'Container Registry'
@@ -21,7 +31,7 @@ steps:
     volumes: |
       $(build.sourcesDirectory)/kubernetes/helm/terracotta:/apps
     containerCommand: 'helm package .'
-    detached: false
+    detached: false    
 - task: Docker@0
   displayName: 'Generate helm index.yaml'
   inputs:
