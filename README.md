@@ -1,7 +1,3 @@
----
-layout: default
----
-
 Terracotta Cloud Helm Repository
 ===============================
 
