@@ -4,16 +4,14 @@ The [Terracotta 10.x enterprise](http://www.terracotta.org/) offering includes t
 
  *  Ehcache 3.x compatibility
  *  TC Store compatibility
- *  Distributed In-Memory Data Management with fault-tolerance via Terracotta Server (1 stripe – active with optional mirror)
+ *  Distributed In-Memory Data Management with fault-tolerance via Terracotta Server (multi stripes, each with an active and optional mirrors)
  *  In memory off-heap storage - take advantage of all the RAM in your server
  *  Fast Restartable Store - persist to disk in memory data across restarts 
 
 
 ## Quick Start
 
-```bash
-$ helm install stable/terracotta
-```
+    helm install --repo=https://softwareag.github.io/terracotta-cloud/ terracotta
 
 ## Introduction
 
@@ -22,13 +20,14 @@ This chart bootstraps a [Terracotta cluster](https://hub.docker.com/_/softwareag
 ## Prerequisites
 
 - Kubernetes 1.10+
+- Helm 2+
 
 ## Installing the Chart
 
 To install the chart with the release name `my-release`:
 
 ```bash
-$ helm install --name my-release stable/terracotta
+$ helm install --name my-release --repo=https://softwareag.github.io/terracotta-cloud/ terracotta
 ```
 
 The command deploys Terracotta on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
@@ -40,7 +39,7 @@ The command deploys Terracotta on the Kubernetes cluster in the default configur
 To uninstall/delete the `my-release` deployment:
 
 ```bash
-$ helm delete my-release
+$ helm delete --purge my-release
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -48,7 +47,8 @@ The command removes all the Kubernetes components associated with the chart and 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```bash
-$ helm install  --name=my-cluster \ 
+$ helm install  --repo=https://softwareag.github.io/terracotta-cloud/
+  --name=my-cluster \ 
   --namespace=terracotta \ 
   --set tag=10.3.1-SNAPSHOT \ 
   --set serverImage.repository=myrepo:443/terracotta/terracotta-server \ 
@@ -56,7 +56,7 @@ $ helm install  --name=my-cluster \
   --set tmcImage.repository=myrepo:443/terracotta/tmc \ 
   --set sampleEhCacheImage.repository=myrepo:443/terracotta/sample-ehcache-client \  
   --set sampleTcStoreImage.repository=myrepo:443/terracotta/sample-tcstore-client \ 
-  --set-file licenseFile=~/Downloads/TerracottaDB101.xml    terracotta/
+  --set-file licenseFile=~/Downloads/TerracottaDB101.xml    terracotta
 ```
 
 
