@@ -8,10 +8,10 @@ steps:
     ConnectionName: gh-push-tc-org
     userNameVarName: U
     passwordVarName: P
-- bash: |
-    pwd
-    ls -l $(build.sourcesDirectory)
-    ls -l $(build.sourcesDirectory)/kubernetes/helm/terracotta
+#- bash: |
+#    pwd
+#    ls -l $(build.sourcesDirectory)
+#    ls -l $(build.sourcesDirectory)/kubernetes/helm/terracotta
 - task: Docker@0
   displayName: 'Generate helm package'
   inputs:
@@ -33,14 +33,16 @@ steps:
     containerCommand: 'repo index .'
     detached: false    
 - bash: |
-
+    # setup Github Pages branch and repo to push to
     gh_url="https://$U:$P@github.com/SoftwareAG/terracotta-cloud.git"
     gh_branch=gh-pages
     gh_source="#${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}"
     
+    # setup git username and email; auth was done in a previous task 
     git config --local user.name "autogen"
     git config --local user.email "autogen-noreply@no-reply.softwareag.com"
 
+    # only keep files that were generated previously : index.yaml and a .tgz archive
     mv $(build.sourcesDirectory)/kubernetes/helm/terracotta/*.* ./
     git status
     git checkout -f gh-pages
