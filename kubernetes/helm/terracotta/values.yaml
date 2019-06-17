@@ -1,5 +1,6 @@
 tag: 10.3
 pullPolicy: Always
+#comment
 
 serverImage:
   repository: store/softwareag/terracotta-server
