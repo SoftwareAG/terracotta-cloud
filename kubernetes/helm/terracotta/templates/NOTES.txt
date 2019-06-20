@@ -2,7 +2,7 @@
 
 -------------------------------------------------------------------------------
 
-To access your Terracotta cluster from within the Kubernetes cluster, configure your Ehcache3 or TC Store client with the following Terracotta URL :
+To access your Terracotta cluster from within the Kubernetes cluster, configure your Ehcache3 or TC Store client with the following Terracotta URL:
 
 terracotta://{{ template "terracotta.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
 
