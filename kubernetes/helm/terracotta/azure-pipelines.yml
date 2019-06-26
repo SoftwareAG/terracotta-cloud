@@ -23,6 +23,16 @@ steps:
     containerCommand: 'package .'
     detached: false    
 - task: Docker@0
+  displayName: 'Download existing index.yaml'
+  inputs:
+    containerRegistryType: 'Container Registry'
+    action: 'Run an image'
+    imageName: 'alpine:latest'
+    volumes: |
+      $(build.sourcesDirectory)/kubernetes/helm/terracotta:/apps
+    containerCommand: 'wget -P /apps/ https://softwareag.github.io/terracotta-cloud/index.yaml'
+    detached: false   
+- task: Docker@0
   displayName: 'Generate helm index.yaml'
   inputs:
     containerRegistryType: 'Container Registry'
@@ -30,7 +40,7 @@ steps:
     imageName: 'alpine/helm'
     volumes: |
       $(build.sourcesDirectory)/kubernetes/helm/terracotta:/apps
-    containerCommand: 'repo index .'
+    containerCommand: 'repo index --merge index.yaml .'
     detached: false    
 - bash: |
     # setup Github Pages branch and repo to push to
