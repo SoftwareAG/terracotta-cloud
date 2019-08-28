@@ -72,3 +72,4 @@ steps:
     git commit -m "Update repository with latest helm chart from ${gh_source} ${COMMIT}" index.yaml *.tgz
     git push $gh_url $gh_branch
   displayName: 'Commit Helm Charts'
+  condition: not(eq(variables['Build.Reason'], 'PullRequest'))
