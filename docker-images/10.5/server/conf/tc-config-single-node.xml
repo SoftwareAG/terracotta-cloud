@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2011-2019 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.
+  Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG.
+  -->
+
+<tc-config xmlns="http://www.terracotta.org/config"
+           xmlns:ohr="http://www.terracotta.org/config/offheap-resource"
+           xmlns:backup="http://www.terracottatech.com/config/backup-restore"
+           xmlns:lease="http://www.terracotta.org/service/lease"
+           xmlns:data="http://www.terracottatech.com/config/data-roots">
+
+  <plugins>
+    <!-- configuring a shorter lease period, to have clients stop trying sooner when the connection is down -->
+    <service>
+      <lease:connection-leasing>
+        <lease:lease-length unit="seconds">20</lease:lease-length>
+      </lease:connection-leasing>
+    </service>
+    <config>
+      <ohr:offheap-resources>
+        <ohr:resource name="OFFHEAP_RESOURCE1_NAME" unit="OFFHEAP_RESOURCE1_UNIT">OFFHEAP_RESOURCE1_SIZE
+        </ohr:resource>
+        <ohr:resource name="OFFHEAP_RESOURCE2_NAME" unit="OFFHEAP_RESOURCE2_UNIT">OFFHEAP_RESOURCE2_SIZE
+        </ohr:resource>
+      </ohr:offheap-resources>
+    </config>
+
+    <config>
+      <data:data-directories>
+        <data:directory name="PLATFORM" use-for-platform="true">/data/dataroots/platform</data:directory>
+        <data:directory name="DATA_RESOURCE1">/data/dataroots/DATA_RESOURCE1</data:directory>
+        <data:directory name="DATA_RESOURCE2">/data/dataroots/DATA_RESOURCE2</data:directory>
+      </data:data-directories>
+    </config>
+
+    <service>
+      <backup:backup-restore>
+        <backup:backup-location path="/data/backups"/>
+      </backup:backup-restore>
+    </service>
+  </plugins>
+
+  <servers>
+    <server host="%h" name="%h">
+      <tsa-port>9410</tsa-port>
+      <tsa-group-port>9430</tsa-group-port>
+    </server>
+    <client-reconnect-window>120</client-reconnect-window>
+  </servers>
+
+  <failover-priority>
+    <availability/>
+  </failover-priority>
+
+</tc-config>
