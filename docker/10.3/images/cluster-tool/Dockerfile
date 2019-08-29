@@ -11,6 +11,7 @@ ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.3_THI
 
 COPY docker/images/cluster-tool/entrypoint.sh $SAG_HOME/cluster-tool/
 COPY ./tools/cluster-tool/ $SAG_HOME/cluster-tool/
+COPY ./tools/common/ $SAG_HOME/common/
 
 # if you have a directory on your docker node that contains a license named license.xml, bind it to this volume !
 ENV LICENSES_DIRECTORY "/licenses/"

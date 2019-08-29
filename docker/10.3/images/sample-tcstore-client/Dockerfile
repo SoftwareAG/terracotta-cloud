@@ -17,6 +17,7 @@ COPY docker/images/sample-tcstore-client/entrypoint.sh $SAG_HOME/
 
 # cluster tool is necessary to check the status of the cluster before starting the client
 COPY tools/cluster-tool/ $SAG_HOME/cluster-tool/
+COPY tools/common/ $SAG_HOME/common/
 
 # This is the current working directory
 WORKDIR $SAG_HOME
