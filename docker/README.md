@@ -29,3 +29,30 @@ ENV PATH=/opt/softwareag/jvm/jvm/bin:/opt/softwareag:/usr/local/sbin:/usr/local/
 ## How to build
 
 All the instructions are present in the sub folders !
+
+That said, here are some command lines worth of mention.
+
+In an unzipped Terracotta kit, 
+
+* Export the version, either 10.3 or 10.5
+
+      export VERSION=10.3
+
+* fetch the docker folder from this repo
+
+      curl -L https://github.com/SoftwareAG/terracotta-cloud/archive/master.tar.gz | tar xvz &&  mv terracotta-cloud-master/docker/$VERSION docker
+    
+* Build all the images
+
+```
+docker build --file docker/images/cluster-tool/Dockerfile --tag terracotta-cluster-tool:$VERSION .
+docker build --file docker/images/sample-ehcache-client/Dockerfile --tag sample-ehcache-client:$VERSION .
+docker build --file docker/images/sample-tcstore-client/Dockerfile --tag sample-tcstore-client:$VERSION .
+docker build --file docker/images/server/Dockerfile --tag terracotta-server:$VERSION .
+docker build --file docker/images/tmc/Dockerfile --tag tmc:$VERSION .
+```
+
+* Run the smoke tests
+    
+      docker/smoke-test/smoke-test.sh
+    
