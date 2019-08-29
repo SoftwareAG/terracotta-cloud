@@ -54,5 +54,6 @@ docker build --file docker/images/tmc/Dockerfile --tag tmc:$VERSION .
 
 * Run the smoke tests
     
-      docker/smoke-test/smoke-test.sh
+      cd docker/smoke-test
+      ./smoke-test.sh
     
