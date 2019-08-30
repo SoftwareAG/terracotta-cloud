@@ -51,6 +51,10 @@ docker build --file docker/images/sample-tcstore-client/Dockerfile --tag sample-
 docker build --file docker/images/server/Dockerfile --tag terracotta-server:$VERSION .
 docker build --file docker/images/tmc/Dockerfile --tag tmc:$VERSION .
 ```
+For 10.3 only:
+
+    docker build --file docker/images/websessions-cart-example/Dockerfile --tag websessions-cart-example:$VERSION .
+
 
 * Run the smoke tests
     
