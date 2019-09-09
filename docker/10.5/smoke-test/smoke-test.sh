@@ -8,7 +8,7 @@ set -x
 source "util.sh"
 
 function cleanup {
-  smoke-test-cleanup.sh
+  ./smoke-test-cleanup.sh
 }
 
 # Cleaning up the enviornment before starting the script.
