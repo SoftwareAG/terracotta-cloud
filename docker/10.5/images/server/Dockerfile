@@ -3,7 +3,7 @@
 #
 # This Dockerfile defines an image that can run as Terracotta Server
 
-FROM daerepository03.eur.ad.sag:4443/ibit/ubi7:ubi-7-jdk-test
+FROM daerepository03.eur.ad.sag:4443/ibit/ubi7:jdk8u212-ubi7.7-99_approved
 LABEL maintainers="Anthony Dahanne <anthony.dahanne@softwareag.com>"
 
 # SAG_HOME is defined to /opt/softwareag in the base image
