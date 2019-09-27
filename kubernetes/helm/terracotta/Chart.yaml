@@ -8,6 +8,7 @@ keywords:
   - jcache
   - in-memory
   - caching
+  - java
 home: http://www.terracotta.org/
 icon: http://www.terracotta.org/wp-content/themes/terracotta/library/images/logo.png
 sources:
