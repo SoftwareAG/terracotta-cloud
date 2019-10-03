@@ -6,8 +6,8 @@ LABEL maintainers="Anthony Dahanne <anthony.dahanne@softwareag.com>"
 
 # SAG_HOME is defined to /opt/softwareag in the base image
 COPY ./legal $SAG_HOME/legal
-ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.3_THIRD_PARTY_TERMS.pdf?version=1&modificationDate=1539787811711&api=v2 \
- $SAG_HOME/legal/TDB_10.3_THIRD_PARTY_TERMS.pdf
+ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.5_terms.pdf?version=1&modificationDate=1570068076106&api=v2 \
+ $SAG_HOME/legal/TDB_10.5_terms.pdf
 
 COPY docker/images/cluster-tool/entrypoint.sh $SAG_HOME/cluster-tool/
 COPY ./tools/cluster-tool/ $SAG_HOME/cluster-tool/
