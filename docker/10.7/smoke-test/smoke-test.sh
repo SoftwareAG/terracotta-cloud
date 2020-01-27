@@ -38,7 +38,7 @@ validate_result "docker logs $terracotta_id" "cat" "ACTIVE-COORDINATOR" "terraco
 
 
 header "Configuring Terracotta Cluster using cluster-tool"
-docker run -i -e ACCEPT_EULA=Y -e LICENSE_URL=https://iwiki.eur.ad.sag/download/attachments/492808213/TerracottaWS101Linux.xml?api=v2 --name cluster-tool --link terracotta:terracotta \
+docker run -i -e ACCEPT_EULA=Y -e LICENSE_URL=https://iwiki.eur.ad.sag/download/attachments/492808213/TerracottaDB101.xml?api=v2 --name cluster-tool --link terracotta:terracotta \
 terracotta-cluster-tool:$version configure -n "MyCluster" -s "terracotta:9410"
 
 # Checking is the cluster is properly configured.
