@@ -96,19 +96,3 @@ container_running "$store_client_id"
 
 # Checking store client is reflected in tmc.
 validate_result "curl http://localhost:19480/api/connections" 'jq --raw-output .MyCluster.runtime.datasetServerEntities."MyDataset-1".offheapResourceName' "offheap-2" "store client couldn't connect to the cluster"
-
-
-header "Validating WebSession sample client"
-sessions_client_id=$(docker run -e JAVA_OPTS="-Dterracotta.websessions.store.tcstore.uri=terracotta://terracotta:9410/sessions-example -Dterracotta.websessions.store.tcstore.offheapResource=offheap-2 -Dterracotta.websessions.store.tcstore.diskResource=dataroot-2"  \
-     -e ACCEPT_EULA=Y \
-     --link terracotta:terracotta \
-     --name websessions-cart-example \
-     -p 18080:8080 \
-     -d websessions-cart-example:$version)
-
-# Ensure the store client container started.
-container_running "$sessions_client_id"
-
-# Checking web sessions client is reflected in tmc.
-validate_result "curl http://localhost:19480/api/connections" 'jq --raw-output .MyCluster.runtime.sessionStoreEntities."Websessions:/Catalina/localhost/cart/sessions".offheapResourceName' "offheap-2" "web sessions client couldn't connect to the cluster"
-
