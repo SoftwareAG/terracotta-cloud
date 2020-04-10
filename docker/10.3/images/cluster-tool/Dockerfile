@@ -1,7 +1,7 @@
 # Copyright (c) 2011-2019 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.
 # Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG
 
-FROM daerepository03.eur.ad.sag:4443/ibit/java:10.3
+FROM dtr.eur.ad.sag:4443/ibit/java:10.3
 LABEL maintainers="Boyu Sun <boyu.sun@softwareag.com>, Anthony Dahanne <anthony.dahanne@softwareag.com>, Ravi Chaturvedi <ravi.chaturvedi@softwareag.com>"
 
 # SAG_HOME is defined to /opt/softwareag in the base image

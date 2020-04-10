@@ -69,7 +69,7 @@ spec:
     spec:
       containers:
       - name: cluster-tool
-        image: daerepository03.eur.ad.sag:4443/terracotta/terracotta-cluster-tool:10.4.0-SNAPSHOT
+        image: dtr.eur.ad.sag:4443/terracotta/terracotta-cluster-tool:10.4.0-SNAPSHOT
         imagePullPolicy: Always #ensure the node will always try to pull from the registry
         args: ["configure", "-n", "MyCluster", "/configs/tc-config.xml"]
         env:
@@ -104,7 +104,7 @@ spec:
         app: store-client
     spec:
       containers:
-      - image: daerepository03.eur.ad.sag:4443/terracotta/sample-tcstore-client:10.4.0-SNAPSHOT
+      - image: dtr.eur.ad.sag:4443/terracotta/sample-tcstore-client:10.4.0-SNAPSHOT
         imagePullPolicy: Always #ensure the node will always try to pull from the registry
         name: store-client
         env:
@@ -132,7 +132,7 @@ spec:
         app: caching-client
     spec:
       containers:
-      - image: daerepository03.eur.ad.sag:4443/terracotta/sample-ehcache-client:10.4.0-SNAPSHOT
+      - image: dtr.eur.ad.sag:4443/terracotta/sample-ehcache-client:10.4.0-SNAPSHOT
         imagePullPolicy: Always #ensure the node will always try to pull from the registry
         name: caching-client
         env:
@@ -159,7 +159,7 @@ spec:
         app: sessions
     spec:
       containers:
-      - image:  daerepository03.eur.ad.sag:4443/terracotta/websessions-cart-example:10.4.0-SNAPSHOT
+      - image:  dtr.eur.ad.sag:4443/terracotta/websessions-cart-example:10.4.0-SNAPSHOT
         imagePullPolicy: Always
         name: sessions
         env:
@@ -218,7 +218,7 @@ spec:
         app: tmc
     spec:
       containers:
-      - image: daerepository03.eur.ad.sag:4443/terracotta/tmc:10.4.0-SNAPSHOT
+      - image: dtr.eur.ad.sag:4443/terracotta/tmc:10.4.0-SNAPSHOT
         imagePullPolicy: Always #ensure the node will always try to pull from the registry
         name: tmc
         env:
@@ -316,7 +316,7 @@ spec:
       # pod definition
       containers:
       - name: terracotta
-        image: daerepository03.eur.ad.sag:4443/terracotta/terracotta-server:10.4.0-SNAPSHOT
+        image: dtr.eur.ad.sag:4443/terracotta/terracotta-server:10.4.0-SNAPSHOT
         imagePullPolicy: Always #ensure the node will always try to pull from the registry
         resources:
           requests:

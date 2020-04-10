@@ -3,7 +3,7 @@
 #
 # This Dockerfile defines an image including the Terracotta Management Console
 
-FROM daerepository03.eur.ad.sag:4443/ibit/java:10.3
+FROM dtr.eur.ad.sag:4443/ibit/java:10.3
 LABEL maintainers="Boyu Sun <boyu.sun@softwareag.com>, Anthony Dahanne <anthony.dahanne@softwareag.com>"
 
 # SAG_HOME is defined to /opt/softwareag in the base image
