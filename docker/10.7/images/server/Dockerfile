@@ -4,7 +4,7 @@
 # This Dockerfile defines an image that can run as Terracotta Server
 
 FROM dtr.eur.ad.sag:4443/ibit/ubi7:jdk8u212-ubi7.7-99_approved
-LABEL maintainers="Anthony Dahanne <anthony.dahanne@softwareag.com>"
+LABEL maintainers="Abhilash <Abhilash.Abhilash@softwareag.com>"
 
 # SAG_HOME is defined to /opt/softwareag in the base image
 COPY ./legal $SAG_HOME/legal
@@ -12,8 +12,7 @@ ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.5_ter
  $SAG_HOME/legal/TDB_10.5_terms.pdf
 
 COPY ./server/ $SAG_HOME/server/
-COPY docker/images/server/conf/tc-config-single-node.xml $SAG_HOME/server/conf/tc-config-single-node.xml
-COPY docker/images/server/conf/tc-config-active-passive.xml $SAG_HOME/server/conf/tc-config-active-passive.xml
+COPY docker/images/server/conf/tc-cluster-single-node.properties $SAG_HOME/server/conf/tc-cluster-single-node.properties
 COPY docker/images/server/conf/logback.xml $SAG_HOME/server/lib/logback-test.xml
 COPY docker/images/server/entrypoint.sh $SAG_HOME/server/entrypoint.sh
 

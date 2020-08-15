@@ -28,18 +28,16 @@ fi
 
 
 header "Starting Terracotta Server"
-terracotta_id=$(docker run -d -e ACCEPT_EULA=Y --name terracotta terracotta-server:$version)
+terracotta_id=$(docker run -e ACCEPT_EULA=Y --name terracotta --hostname terracotta -p 9410:9410 -d terracotta-server:$version)
 
 # Ensure the terracotta server container started.
 container_running "$terracotta_id"
-validate_result "docker logs $terracotta_id" "cat" "ACTIVE-COORDINATOR" "terracotta server couldn't properly started"
+validate_result "docker logs $terracotta_id" "cat" "Server started as default-node1" "terracotta server couldn't properly started"
 
 
 
-
-header "Configuring Terracotta Cluster using cluster-tool"
-docker run -i -e ACCEPT_EULA=Y -e LICENSE_URL=https://iwiki.eur.ad.sag/download/attachments/492808213/Terracotta-10.5-linux-unlimited.xml?api=v2 --name cluster-tool --link terracotta:terracotta \
-terracotta-cluster-tool:$version configure -n "MyCluster" -s "terracotta:9410"
+header "Activating Terracotta Cluster using config-tool"
+docker run -i -e ACCEPT_EULA=Y -e LICENSE_URL=https://iwiki.eur.ad.sag/download/attachments/492808213/Terracotta-10.5-linux-unlimited.xml?api=v2 --name config-tool --link terracotta:terracotta terracotta-config-tool:$version activate -n "tc-cluster" -s "terracotta"
 
 # Checking is the cluster is properly configured.
 if [ "$(echo $?)" != '0' ]; then
@@ -62,7 +60,7 @@ validate_result "docker logs $tmc_id" "cat" "Undertow started" "couldn't start t
 
 header "Validating the created cluster"
 # Ensuring TMC is able to proble the cluster.
-validate_result "curl http://localhost:19480/api/connections/probe?uri=terracotta%3A%2F%2Fterracotta%3A9410" "jq --raw-output .connectionName" "MyCluster" "Cluster is not accessible from TMC."
+validate_result "curl http://localhost:19480/api/connections/probe?uri=terracotta%3A%2F%2Fterracotta%3A9410" "jq --raw-output .connectionName" "tc-cluster" "Cluster is not accessible from TMC."
 
 
 # Ensuring TMC is able to connect with the cluster

@@ -16,8 +16,7 @@ COPY docker/images/sample-tcstore-client/src/ $SAG_HOME/
 COPY docker/images/sample-tcstore-client/entrypoint.sh $SAG_HOME/
 
 # cluster tool is necessary to check the status of the cluster before starting the client
-COPY tools/cluster-tool/ $SAG_HOME/cluster-tool/
-COPY tools/common/ $SAG_HOME/common/
+COPY tools/ $SAG_HOME/cluster-tool/
 
 # This is the current working directory
 WORKDIR $SAG_HOME
@@ -29,7 +28,7 @@ ENV CLASSPATH ".:/opt/softwareag/client/store/*:/opt/softwareag/client/ehcache/*
 
 ENV DATAROOT_RESOURCE_NAME "dataroot-2"
 ENV OFFHEAP_RESOURCE_NAME "offheap-2"
-ENV CLUSTER_NAME "MyCluster"
+ENV CLUSTER_NAME "tc-cluster"
 ENV CUSTOM_TAG "client"
 ENV CUSTOM_ALIAS "MyTcStoreClient"
 ENV TERRACOTTA_SERVER_URL=terracotta:9410

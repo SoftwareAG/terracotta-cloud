@@ -8,4 +8,4 @@ set -x
 source "util.sh"
 
 header "Stop and Remove all containers"
-docker rm -f terracotta tmc cluster-tool store-client ehcache-client
+docker rm -f terracotta tmc cluster-tool store-client ehcache-client config-tool

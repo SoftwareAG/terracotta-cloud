@@ -14,17 +14,17 @@ The Terracotta 10.x EE offering includes the following:
 
 ##### Quick start : one active node
 
-    docker run -e ACCEPT_EULA=Y --name terracotta -p 9410:9410 -d terracotta-server:10.7.0-SNAPSHOT
+    docker run -e ACCEPT_EULA=Y --name terracotta --hostname terracotta -p 9410:9410 -d terracotta-server:10.7
 
 A quick look at the logs :
 
-    docker logs -f tc-server
+    docker logs -f terracotta
 
 Should return some logs ending with :
 
-    [TC] 2017-03-22 03:39:26,627 INFO - Terracotta Server instance has started up as ACTIVE node on 0.0.0.0:9410 successfully, and is now ready for work.
+    [Server Startup Thread] INFO com.tc.server.TCServer - Server started as default-node1
 
-It's now ready and waiting for clients !
+It's now ready to be configured using config-tool !
 
 #### How to build this image
 

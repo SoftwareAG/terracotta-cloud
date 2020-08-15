@@ -9,14 +9,18 @@ else
     exit 10
 fi
 
-SERVERS_TO_CONFIGURE=$(echo $TERRACOTTA_SERVER_URL | sed 's/,/ /g')
-echo "Checking cluster status, using cluster tool"
+# If license url environment is available then download it to /licenses/ directory.
+if [ $LICENSE_URL ]; then
+    curl -v -k -L -o $LICENSES_DIRECTORY/license.xml $LICENSE_URL
+fi
+
+# Run cluster-tool, passing all the passed in container arguments to the cluster-tool.sh script.
+CMD="bin/config-tool.sh $@"
+
+# It will help in identifying what command ran in the container.
 set -x
-for server in $SERVERS_TO_CONFIGURE ; do
-   cluster-tool/bin/cluster-tool.sh status -n $CLUSTER_NAME -s $server
-   code=$?
-   [ $code -eq 0 ] && break
-done
+
+su -c "$CMD" sagadmin
 
 # from cluster-tool help :
 #Exit Codes:
@@ -31,11 +35,3 @@ done
 #    INTERNAL_ERROR(50)
 #    NOT_IMPLEMENTED(51)
 #    BAD_GATEWAY(52)
-case "$code" in
-    0)
-    echo "Now starting java client"
-    java_opts="$JAVA_OPTS -Dlogback.configurationFile=$SAG_HOME/logback.xml"
-    java $java_opts ClientDoingInsertionsAndRetrievals;
-  ;;
-esac
-set +x
