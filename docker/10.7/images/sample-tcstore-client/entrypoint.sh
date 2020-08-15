@@ -13,7 +13,7 @@ SERVERS_TO_CONFIGURE=$(echo $TERRACOTTA_SERVER_URL | sed 's/,/ /g')
 echo "Checking cluster status, using cluster tool"
 set -x
 for server in $SERVERS_TO_CONFIGURE ; do
-   cluster-tool/bin/cluster-tool.sh status -n $CLUSTER_NAME $server
+   cluster-tool/bin/cluster-tool.sh status -n $CLUSTER_NAME -s $server
    code=$?
    [ $code -eq 0 ] && break
 done

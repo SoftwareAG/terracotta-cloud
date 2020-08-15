@@ -34,7 +34,7 @@ That said, here are some command lines worth of mention.
 
 In an unzipped Terracotta kit, 
 
-* Export the version, either 10.3 or 10.5
+* Export the version, either 10.3, 10.5 or 10.7
 
       export VERSION=10.3
 
@@ -56,8 +56,12 @@ For 10.3 only:
     docker build --file docker/images/websessions-cart-example/Dockerfile --tag websessions-cart-example:$VERSION .
 
 
+For 10.7 only:
+
+    docker build --file docker/images/config-tool/Dockerfile --tag terracotta-config-tool:$VERSION .
+
 * Run the smoke tests
     
       cd docker/smoke-test
       ./smoke-test.sh
-    
+

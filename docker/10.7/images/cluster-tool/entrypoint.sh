@@ -9,18 +9,6 @@ else
     exit 10
 fi
 
-# If license url environment is available then download it to /licenses/ directory.
-if [ $LICENSE_URL ]; then
-    curl -v -k -L -o $LICENSES_DIRECTORY/license.xml $LICENSE_URL
-fi
-
-# Link license.xml to cluster-tool/conf, if exist in the /licenses/ directory
-# If cluster-tool/conf/license.xml file is available, then it will get automatically picked up by the cluster-tool,
-# without need to specify the license-file during command invocation.
-if [ -f $LICENSES_DIRECTORY/license.xml ]; then
-    ln -s $LICENSES_DIRECTORY/license.xml $SAG_HOME/cluster-tool/conf/license.xml
-fi
-
 # Run cluster-tool, passing all the passed in container arguments to the cluster-tool.sh script.
 CMD="bin/cluster-tool.sh $@"
 

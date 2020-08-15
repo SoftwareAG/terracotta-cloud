@@ -4,7 +4,7 @@
 # This Dockerfile creates an image that can run as Terracotta Ehcache client
 
 FROM dtr.eur.ad.sag:4443/ibit/ubi7:jdk8u212-ubi7.7-99_approved
-LABEL maintainers="Anthony Dahanne <anthony.dahanne@softwareag.com>"
+LABEL maintainers="Abhilash <Abhilash.Abhilash@softwareag.com>"
 
 # SAG_HOME is defined to /opt/softwareag in the base image
 COPY ./legal $SAG_HOME/legal
@@ -17,8 +17,7 @@ COPY docker/images/sample-ehcache-client/entrypoint.sh $SAG_HOME/
 COPY docker/images/sample-ehcache-client/logback.xml $SAG_HOME/
 
 # cluster tool is necessary to check the status of the cluster before starting the client
-COPY tools/cluster-tool/ $SAG_HOME/cluster-tool/
-COPY tools/common/ $SAG_HOME/common/
+COPY tools/ $SAG_HOME/cluster-tool/
 
 # This is the current working directory
 WORKDIR $SAG_HOME
@@ -28,7 +27,7 @@ WORKDIR $SAG_HOME
 ENV JAVA_OPTS "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
 ENV CLASSPATH ".:/opt/softwareag/client/ehcache/*:/opt/softwareag/client/lib/*:/opt/softwareag/client/logging/*:/opt/softwareag/client/logging/impl/*"
 
-ENV CLUSTER_NAME "MyCluster"
+ENV CLUSTER_NAME "tc-cluster"
 ENV TERRACOTTA_SERVER_URL=terracotta:9410
 ENV CACHE_MANAGER_ENTITY_NAME "MyCacheManager"
 ENV CUSTOM_TAG "client"
