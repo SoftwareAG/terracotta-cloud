@@ -37,7 +37,7 @@ validate_result "docker logs $terracotta_id" "cat" "Server started as default-no
 
 
 header "Activating Terracotta Cluster using config-tool"
-docker run -i -e ACCEPT_EULA=Y -e LICENSE_URL=https://iwiki.eur.ad.sag/download/attachments/492808213/Terracotta-10.5-linux-unlimited.xml?api=v2 --name config-tool --link terracotta:terracotta terracotta-config-tool:$version activate -n "tc-cluster" -s "terracotta"
+docker run -i -e ACCEPT_EULA=Y -e LICENSE_URL=https://iwiki.eur.ad.sag/download/attachments/492808213/Terracotta-10.5-linux-unlimited.xml?api=v2 --name config-tool --link terracotta:terracotta terracotta-config-tool:$version activate -l /licenses/license.xml -n "tc-cluster" -s "terracotta"
 
 # Checking is the cluster is properly configured.
 if [ "$(echo $?)" != '0' ]; then
@@ -80,7 +80,7 @@ ehcache_client_id=$(docker run -d -e ACCEPT_EULA=Y -e TERRACOTTA_SERVER_URL=terr
 container_running "$ehcache_client_id"
 
 # Checking ehcache client reflected in tmc.
-validate_result "curl http://localhost:19480/api/connections" 'jq --raw-output .MyCluster.runtime.ehcacheServerEntities.MyCacheManager.resourcePools."my-resource-pool".offheapResource' "offheap-1" "ehcache client couldn't connect to the cluster"
+validate_result "curl http://localhost:19480/api/connections" 'jq --raw-output ."tc-cluster".runtime.ehcacheServerEntities.MyCacheManager.resourcePools."my-resource-pool".offheapResource' "offheap-1" "ehcache client couldn't connect to the cluster"
 
 
 
@@ -93,4 +93,4 @@ store_client_id=$(docker run -d -e ACCEPT_EULA=Y -e TERRACOTTA_SERVER_URL=terrac
 container_running "$store_client_id"
 
 # Checking store client is reflected in tmc.
-validate_result "curl http://localhost:19480/api/connections" 'jq --raw-output .MyCluster.runtime.datasetServerEntities."MyDataset-1".offheapResourceName' "offheap-2" "store client couldn't connect to the cluster"
+validate_result "curl http://localhost:19480/api/connections" 'jq --raw-output ."tc-cluster".runtime.datasetServerEntities."MyDataset-1".offheapResourceName' "offheap-2" "store client couldn't connect to the cluster"
