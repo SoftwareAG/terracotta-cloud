@@ -12,6 +12,7 @@ fi
 sed -i -r 's/OFFHEAP_RESOURCE1_NAME/'$OFFHEAP_RESOURCE1_NAME'/; s/OFFHEAP_RESOURCE1_UNIT/'$OFFHEAP_RESOURCE1_UNIT'/; s/OFFHEAP_RESOURCE1_SIZE/'$OFFHEAP_RESOURCE1_SIZE'/' conf/tc-cluster-single-node.properties \
   && sed -i -r 's/OFFHEAP_RESOURCE2_NAME/'$OFFHEAP_RESOURCE2_NAME'/; s/OFFHEAP_RESOURCE2_UNIT/'$OFFHEAP_RESOURCE2_UNIT'/; s/OFFHEAP_RESOURCE2_SIZE/'$OFFHEAP_RESOURCE2_SIZE'/' conf/tc-cluster-single-node.properties \
   && sed -i -r 's/DATA_RESOURCE1/'$DATA_RESOURCE1'/g; s/DATA_RESOURCE2/'$DATA_RESOURCE2'/g' conf/tc-cluster-single-node.properties \
+  && sed -i -r 's/HOSTNAME/'$HOSTNAME'/g' conf/tc-cluster-single-node.properties \
 
 # chown in a volume can be problematic : if the volume is a nfs mount, maybe root can't (and don't need to) chown it for example...
 su sagadmin -c "test -w $BACKUPS_DIRECTORY" || (echo "$BACKUPS_DIRECTORY not writeable by sagadmin, trying to chown it" && chown -R sagadmin:sagadmin $BACKUPS_DIRECTORY)
