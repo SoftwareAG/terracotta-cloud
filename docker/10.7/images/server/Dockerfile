@@ -46,6 +46,8 @@ ENV OFFHEAP_RESOURCE2_SIZE "512"
 ENV DATA_RESOURCE1 "dataroot-1"
 ENV DATA_RESOURCE2 "dataroot-2"
 
+ENV HOSTNAME "terracotta"
+
 # make the JVM aware of the container memory constraints, since JDK 8u131
 # see https://blog.csanchez.org/2017/05/31/running-a-jvm-in-a-container-without-getting-killed
 ENV JAVA_OPTS "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
