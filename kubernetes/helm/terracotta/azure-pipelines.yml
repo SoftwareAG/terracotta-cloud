@@ -1,13 +1,9 @@
 pool:
   vmImage: 'ubuntu-latest'
+variables: 
+- group: 'github'
 
 steps:
-- task: YodLabs.VariableTasks.SetVariablesWithCredentials.SetVariablesWithCredentials@0
-  displayName: 'Github auth'
-  inputs:
-    ConnectionName: gh-push-tc-org
-    userNameVarName: U
-    passwordVarName: P
 - task: Docker@0
   displayName: 'Generate helm package'
   inputs:
@@ -42,7 +38,7 @@ steps:
     detached: false    
 - bash: |
     # setup Github Pages branch and repo to push to
-    gh_url="https://$U:$P@github.com/SoftwareAG/terracotta-cloud.git"
+    gh_url="https://${GITHUB_AUTH}@github.com/SoftwareAG/terracotta-cloud.git"
     gh_branch=gh-pages
     gh_source="#${SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}"
     
@@ -67,5 +63,7 @@ steps:
     git status
     git commit -m "Update repository with latest helm chart from ${gh_source} ${COMMIT}" index.yaml *.tgz
     git push $gh_url $gh_branch
+  env:
+    GITHUB_AUTH: $(gh_user):$(gh_token)
   displayName: 'Commit Helm Charts'
   condition: not(eq(variables['Build.Reason'], 'PullRequest'))
