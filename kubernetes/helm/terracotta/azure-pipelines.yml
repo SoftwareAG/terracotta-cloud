@@ -12,7 +12,7 @@ steps:
     imageName: 'alpine/helm'
     volumes: |
       $(build.sourcesDirectory)/kubernetes/helm/terracotta:/terracotta
-    containerCommand: 'package --save=false .'
+    containerCommand: 'package .'
     workdir: '/terracotta'
     detached: false    
 - task: Docker@0
