@@ -48,9 +48,6 @@ steps:
     git config --local user.name "autogen"
     git config --local user.email "autogen-noreply@no-reply.softwareag.com"
 
-    # to see the commands
-    set -o xtrace
-
     # only keep files that were generated previously : index.yaml and a .tgz archive
     cp $(build.sourcesDirectory)/kubernetes/helm/terracotta/index.yaml /tmp/
     cp $(build.sourcesDirectory)/kubernetes/helm/terracotta/*.tgz /tmp/
