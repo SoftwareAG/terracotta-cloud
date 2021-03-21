@@ -3,12 +3,9 @@ entries:
   terracotta:
   - apiVersion: v1
     appVersion: "10.3"
-    created: "2020-10-01T18:37:12.345404717Z"
-    description: Terracotta Ehcache is an improved version of Java's de facto caching
-      API, Ehcache. It has a powerful, streamlined, modernized caching API taking
-      advantage of newer Java features as well as the capability to be used via the
-      JSR-107 "JCache" API.
-    digest: 9ffccb100f764f2871468afb64cb03476c0055c627002fc9f227a93191a7e820
+    created: "2021-03-21T11:09:34.304538002Z"
+    description: Terracotta Ehcache is an improved version of Java's de facto caching API, Ehcache. It has a powerful, streamlined, modernized caching API taking advantage of newer Java features as well as the capability to be used via the JSR-107 "JCache" API.
+    digest: d61674f10814cf0c792852ec5ba29624aebf208f225864907b9f46d5cd4ee917
     home: http://www.terracotta.org/
     icon: http://www.terracotta.org/wp-content/themes/terracotta/library/images/logo.png
     keywords:
@@ -29,10 +26,7 @@ entries:
   - apiVersion: v1
     appVersion: "10.3"
     created: "2019-06-26T22:54:08.01153729Z"
-    description: Terracotta Ehcache is an improved version of Java's de facto caching
-      API, Ehcache. It has a powerful, streamlined, modernized caching API taking
-      advantage of newer Java features as well as the capability to be used via the
-      JSR-107 "JCache" API.
+    description: Terracotta Ehcache is an improved version of Java's de facto caching API, Ehcache. It has a powerful, streamlined, modernized caching API taking advantage of newer Java features as well as the capability to be used via the JSR-107 "JCache" API.
     digest: 01c3f2b2d81d0f18ad841a5d896be0e8095c03606ab2de4f4c33ab2d53a66bca
     home: http://www.terracotta.org/
     icon: http://www.terracotta.org/wp-content/themes/terracotta/library/images/logo.png
@@ -50,4 +44,4 @@ entries:
     urls:
     - terracotta-0.0.1.tgz
     version: 0.0.1
-generated: "2020-10-01T18:37:12.344369615Z"
+generated: "2021-03-21T11:09:34.303213183Z"
