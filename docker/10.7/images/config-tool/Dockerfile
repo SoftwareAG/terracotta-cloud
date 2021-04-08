@@ -6,8 +6,10 @@ LABEL maintainers="Abhilash <Abhilash.Abhilash@softwareag.com>"
 
 # SAG_HOME is defined to /opt/softwareag in the base image
 COPY ./legal $SAG_HOME/legal
-ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.5_terms.pdf?version=1&modificationDate=1570068076106&api=v2 \
- $SAG_HOME/legal/TDB_10.5_terms.pdf
+ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.7_Docker_terms.pdf?api=v2 \
+ $SAG_HOME/legal/TDB_10.7_Docker_terms.pdf
+ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.7_Docker_properties.pdf?api=v2 \
+ $SAG_HOME/legal/TDB_10.7_Docker_properties.pdf
 
 COPY docker/images/config-tool/entrypoint.sh $SAG_HOME/config-tool/
 COPY docker/images/server/conf/tc-cluster-single-node.properties $SAG_HOME/config-tool/conf

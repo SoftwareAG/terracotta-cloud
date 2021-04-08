@@ -4,12 +4,14 @@
 # This Dockerfile creates an image that can run as Terracotta TC Store client
 
 FROM dtr.eur.ad.sag:4443/ibit/ubi7:jdk8u282-ubi7.9-262_approved
-LABEL maintainers="Anthony Dahanne <anthony.dahanne@softwareag.com>"
+LABEL maintainers="Abhilash <Abhilash.Abhilash@softwareag.com>"
 
 # SAG_HOME is defined to /opt/softwareag in the base image
 COPY ./legal $SAG_HOME/legal
-ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.5_terms.pdf?version=1&modificationDate=1570068076106&api=v2 \
- $SAG_HOME/legal/TDB_10.5_terms.pdf
+ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.7_Docker_terms.pdf?api=v2 \
+ $SAG_HOME/legal/TDB_10.7_Docker_terms.pdf
+ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.7_Docker_properties.pdf?api=v2 \
+ $SAG_HOME/legal/TDB_10.7_Docker_properties.pdf
 
 COPY client/ $SAG_HOME/client/
 COPY docker/images/sample-tcstore-client/src/ $SAG_HOME/
