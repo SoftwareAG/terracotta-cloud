@@ -1,0 +1,5 @@
+FROM dtr.eur.ad.sag:4443/terracotta/sample-ehcache-client:10.7.0-SNAPSHOT
+ADD files /
+USER root
+#RUN apk --update add nmap
+ENTRYPOINT /ipv6.sh && ./entrypoint.sh ;   ls -l ; cat *.xml ; cat /etc/hosts #; nmap -6 -p 9510 terracotta

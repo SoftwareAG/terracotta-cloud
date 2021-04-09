@@ -1,0 +1,73 @@
+# Copyright (c) 2011-2020 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.
+# Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG.
+
+# Note: enable_ipv6 does not work in version 3!
+version: '2.1'
+
+
+# External network if needed (only needed in compose file v3)
+#docker network create  --driver overlay --ipv6 --subnet=2001:3984:3989::/64 --attachable ext_net
+
+networks:
+  #ext_net:
+  #  external:
+  #    name: ext_net
+  app_net:
+    enable_ipv6: true
+    driver: overlay
+    #driver_opts:
+    #  com.docker.network.enable_ipv6: "true"
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 172.16.238.0/24
+      -
+        subnet: 2001:3984:3989::/64
+
+
+services:
+  server1:
+    build:
+      dockerfile: Dockerfile-server
+      context: .
+    hostname: terracotta
+    command: blablabla
+    cap_add:
+     - NET_ADMIN
+    volumes:
+     - ipv6stuff:/ipv6stuff
+    networks:
+      - app_net
+
+  client1:
+    build:
+      dockerfile: Dockerfile-client
+      context: .
+    hostname: client
+    command: SOMETHING
+    cap_add:
+     - NET_ADMIN
+    volumes:
+     - ipv6stuff:/ipv6stuff
+    networks:
+      - app_net
+
+  tmc1:
+    build:
+      dockerfile: Dockerfile-tmc
+      context: .
+    ports:
+     - "9480"
+    hostname: tmc
+    cap_add:
+     - NET_ADMIN
+    volumes:
+     - ipv6stuff:/ipv6stuff
+    networks:
+      - app_net
+
+
+# This volume is used as a poor-man's IPv6 DNS, since Docker doesn't support that.
+volumes:
+  ipv6stuff:

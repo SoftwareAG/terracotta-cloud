@@ -1,0 +1,94 @@
+# Copyright (c) 2011-2020 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.
+# Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG.
+
+version: '3'
+
+networks:
+  terracotta-net:
+# following line to uncomment when using a "real" Docker swarm, not Docker Swarm mode
+    driver: overlay
+
+
+services:
+  cluster-tool:
+    image: dtr.eur.ad.sag:4443/terracotta/terracotta-terracotta-cluster-tool:10.7.0-SNAPSHOT
+    environment:
+      - ACCEPT_EULA=Y
+      - LICENSE_URL=https://iwiki.eur.ad.sag/download/attachments/576615409/Terracotta101.xml?api=v2
+      - TERRACOTTA_SERVER_URL=terracotta-1-1:9410,terracotta-1-2:9410,terracotta-2-1:9410,terracotta-2-2:9410
+    networks:
+     - terracotta-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  caching-client:
+    image: dtr.eur.ad.sag:4443/terracotta/sample-ehcache-client:10.7.0-SNAPSHOT
+    networks:
+      - terracotta-net
+    environment:
+      - ACCEPT_EULA=Y
+      - TERRACOTTA_SERVER_URL=terracotta-1-1:9410,terracotta-1-2:9410,terracotta-2-1:9410,terracotta-2-2:9410
+    depends_on:
+      - cluster-tool
+
+  store-client:
+   image: dtr.eur.ad.sag:4443/terracotta/sample-tcstore-client:10.7.0-SNAPSHOT
+    networks:
+      - terracotta-net
+    environment:
+      - ACCEPT_EULA=Y
+      - TERRACOTTA_SERVER_URL=terracotta-1-1:9410,terracotta-1-2:9410,terracotta-2-1:9410,terracotta-2-2:9410
+    depends_on:
+      - cluster-tool
+
+  tmc:
+    image: dtr.eur.ad.sag:4443/terracotta/tmc:10.7.0-SNAPSHOT
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "9480"
+    networks:
+      - terracotta-net
+    depends_on:
+      - cluster-tool
+
+  terracotta-1-1:
+    hostname: terracotta-1-1
+    image: dtr.eur.ad.sag:4443/terracotta/terracotta-server:10.7.0-SNAPSHOT-2x2
+    environment:
+      - ACCEPT_EULA=Y
+      - TC_SERVER1=terracotta-1-1
+      - TC_SERVER2=terracotta-1-2
+    networks:
+      - terracotta-net
+
+  terracotta-1-2:
+    hostname: terracotta-1-2
+    image: dtr.eur.ad.sag:4443/terracotta/terracotta-server:10.7.0-SNAPSHOT-2x2
+    environment:
+      - ACCEPT_EULA=Y
+      - TC_SERVER1=terracotta-1-1
+      - TC_SERVER2=terracotta-1-2
+    networks:
+      - terracotta-net
+
+  terracotta-2-1:
+    hostname: terracotta-2-1
+    image: dtr.eur.ad.sag:4443/terracotta/terracotta-server:10.7.0-SNAPSHOT-2x2
+    environment:
+      - ACCEPT_EULA=Y
+      - TC_SERVER1=terracotta-2-1
+      - TC_SERVER2=terracotta-2-2
+    networks:
+      - terracotta-net
+
+  terracotta-2-2:
+    hostname: terracotta-2-2
+    image: dtr.eur.ad.sag:4443/terracotta/terracotta-server:10.7.0-SNAPSHOT-2x2
+    environment:
+      - ACCEPT_EULA=Y
+      - TC_SERVER1=terracotta-2-1
+      - TC_SERVER2=terracotta-2-2
+    networks:
+      - terracotta-net

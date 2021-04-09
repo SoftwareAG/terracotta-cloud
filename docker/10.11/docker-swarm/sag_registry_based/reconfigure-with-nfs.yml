@@ -1,0 +1,213 @@
+# Copyright (c) 2011-2020 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.
+# Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG.
+
+version: '3.4'
+
+networks:
+  terracotta-net:
+# following line to uncomment when using a "real" Docker swarm, not Docker Swarm mode
+    driver: overlay
+#to allow debugging from outside the stack
+    attachable: true
+
+volumes:
+  dataroots:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=sfo-nfs-00.eur.ad.sag,rw
+      device: ":/nfs00/anthonydocker/dataroots"
+  backups:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=sfo-nfs-00.eur.ad.sag,rw
+      device: ":/nfs00/anthonydocker/backups"
+  configs:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=sfo-nfs-00.eur.ad.sag,rw
+      device: ":/nfs00/anthonydocker/configs"
+  tmc:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=sfo-nfs-00.eur.ad.sag,rw
+      device: ":/nfs00/anthonydocker/tmc"
+
+services:
+  cluster-tool:
+    image: dtr.eur.ad.sag:4443/adah/cluster-tool-with-configs:10.11.0-SNAPSHOT
+    command: configure -n MyCluster /configs/stripe1.xml /configs/stripe2.xml
+    volumes:
+      - type: volume
+        source: configs
+        target: /configs
+        volume:
+          nocopy: true
+    environment:
+      - ACCEPT_EULA=Y
+    networks:
+     - terracotta-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  caching-client:
+    image: dtr.eur.ad.sag:4443/adah/sample-ehcache-client:10.11.0-SNAPSHOT
+    networks:
+      - terracotta-net
+    environment:
+      - ACCEPT_EULA=Y
+      - TERRACOTTA_SERVER_URL=terracotta-1-1:9410,terracotta-1-2:9410,terracotta-2-1:9410,terracotta-2-2:9410
+    depends_on:
+      - cluster-tool
+
+  store-client:
+    image: dtr.eur.ad.sag:4443/adah/sample-tcstore-client:10.11.0-SNAPSHOT
+    networks:
+      - terracotta-net
+    environment:
+      - ACCEPT_EULA=Y
+      - TERRACOTTA_SERVER_URL=terracotta-1-1:9410,terracotta-1-2:9410,terracotta-2-1:9410,terracotta-2-2:9410
+    depends_on:
+      - cluster-tool
+
+  tmc:
+    image: dtr.eur.ad.sag:4443/adah/tmc:10.11.0-SNAPSHOT
+    environment:
+      - ACCEPT_EULA=Y
+      - TMS_DEFAULTURL=terracotta://terracotta-1-1:9410,terracotta-1-2:9410,terracotta-2-1:9410,terracotta-2-2:9410
+    ports:
+      - "9480"
+    networks:
+      - terracotta-net
+    depends_on:
+      - cluster-tool
+    volumes:
+      - type: volume
+        source: tmc
+        target: /data/tmc
+        volume:
+          nocopy: true
+
+  terracotta-1-1:
+    hostname: terracotta-1-1
+    image: dtr.eur.ad.sag:4443/adah/terracotta-server:10.11.0-SNAPSHOT
+    volumes:
+      - type: volume
+        source: configs
+        target: /configs
+        volume:
+          nocopy: true
+      - type: volume
+        source: dataroots
+        target: /data/dataroots
+        volume:
+          nocopy: true
+      - type: volume
+        source: backups
+        target: /data/backups
+        volume:
+          nocopy: true
+    environment:
+      - ACCEPT_EULA=Y
+    entrypoint:
+      - bin/start-tc-server.sh
+      - -f
+      - /configs/stripe1.xml
+      - -n
+      - terracotta-1-1
+    networks:
+      - terracotta-net
+
+  terracotta-1-2:
+    hostname: terracotta-1-2
+    image: dtr.eur.ad.sag:4443/adah/terracotta-server:10.11.0-SNAPSHOT
+    volumes:
+      - type: volume
+        source: configs
+        target: /configs
+        volume:
+          nocopy: true
+      - type: volume
+        source: dataroots
+        target: /data/dataroots
+        volume:
+          nocopy: true
+      - type: volume
+        source: backups
+        target: /data/backups
+        volume:
+          nocopy: true
+    environment:
+      - ACCEPT_EULA=Y
+    entrypoint:
+      - bin/start-tc-server.sh
+      - -f
+      - /configs/stripe1.xml
+      - -n
+      - terracotta-1-2
+    networks:
+      - terracotta-net
+
+  terracotta-2-1:
+    hostname: terracotta-2-1
+    image: dtr.eur.ad.sag:4443/adah/terracotta-server:10.11.0-SNAPSHOT
+    volumes:
+      - type: volume
+        source: configs
+        target: /configs
+        volume:
+          nocopy: true
+      - type: volume
+        source: dataroots
+        target: /data/dataroots
+        volume:
+          nocopy: true
+      - type: volume
+        source: backups
+        target: /data/backups
+        volume:
+          nocopy: true
+    environment:
+      - ACCEPT_EULA=Y
+    entrypoint:
+      - bin/start-tc-server.sh
+      - -f
+      - /configs/stripe2.xml
+      - -n
+      - terracotta-2-1
+    networks:
+      - terracotta-net
+
+  terracotta-2-2:
+    hostname: terracotta-2-2
+    image: dtr.eur.ad.sag:4443/adah/terracotta-server:10.11.0-SNAPSHOT
+    volumes:
+      - type: volume
+        source: configs
+        target: /configs
+        volume:
+          nocopy: true
+      - type: volume
+        source: dataroots
+        target: /data/dataroots
+        volume:
+          nocopy: true
+      - type: volume
+        source: backups
+        target: /data/backups
+        volume:
+          nocopy: true
+    environment:
+      - ACCEPT_EULA=Y
+    entrypoint:
+      - bin/start-tc-server.sh
+      - -f
+      - /configs/stripe2.xml
+      - -n
+      - terracotta-2-2
+    networks:
+      - terracotta-net

@@ -1,0 +1,48 @@
+Copyright (c) 2011-2020 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.
+Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG
+@startuml
+participant Developer as dev
+
+participant master as master
+participant 10.1.0 as 10.1.0
+
+participant "terracotta-kit job" as snapshotjob
+participant "terracotta-pipeline job" as pipelinejob
+participant "Docker Build Job" as dockerjob
+
+participant Kratos as kratos
+participant "SAG Docker Registry" as dockerregistry
+
+
+dev -> master : Merge PR
+
+alt Release Candidate
+master <-- pipelinejob: Trigger
+pipelinejob -> pipelinejob: Build
+pipelinejob -> kratos: terracotta-10.2.0.0.70.tar.gz
+pipelinejob --> dockerjob: Trigger
+dockerjob -> kratos: pull terracotta-10.2.0.0.70.tar.gz
+dockerjob -> dockerjob: build docker images
+dockerjob -> dockerregistry: Publish\nterracotta-server:10.2.0.0.70\ntmc:10.2.0.0.70\ncluster-tool:10.2.0.0.70\nsample-ehcache-client:10.2.0.0.70\nsample-tcstore-client:10.2.0.0.70
+dockerjob -> dockerregistry: Publish\nterracotta-server:10.2.0-SNAPSHOT\ntmc:10.2.0-SNAPSHOT\nterracotta-cluster-tool:10.2.0-SNAPSHOT\nsample-ehcache-client:10.2.0-SNAPSHOT\nsample-tcstore-client:10.2.0-SNAPSHOT
+
+alt Only from master branch build
+dockerjob -> dockerregistry: Publish\nterracotta-server:latest\ntmc:latest\ncluster-tool:latest\nsample-ehcache-client:latest\nsample-tcstore-client:latest
+dockerjob -> dockerregistry: Publish\nREADME description of published images
+end
+end
+
+dev -> 10.1.0 : Merge PR
+
+alt Release Candidate
+10.1.0 <-- pipelinejob: Trigger
+pipelinejob -> pipelinejob: Build
+pipelinejob -> kratos: terracotta-10.1.0.3.10.tar.gz
+pipelinejob --> dockerjob: Trigger
+dockerjob -> kratos: pull terracotta-10.1.0.3.10.tar.gz
+dockerjob -> dockerjob: build docker images
+dockerjob -> dockerregistry: Publish\nterracotta-server:10.1.0.3.10\ntmc:10.1.0.3.10\ncluster-tool:10.1.0.3.10\nsample-ehcache-client:10.1.0.3.10\nsample-tcstore-client:10.1.0.3.10
+dockerjob -> dockerregistry: Publish\nterracotta-server:10.1.0-SNAPSHOT\ntmc:10.1.0-SNAPSHOT\ncluster-tool:10.1.0-SNAPSHOT\nsample-ehcache-client:10.1.0-SNAPSHOT\nsample-tcstore-client:10.1.0-SNAPSHOT
+end
+
+@enduml

@@ -1,0 +1,6 @@
+FROM dtr.eur.ad.sag:4443/terracotta/terracotta-server:10.7.0-SNAPSHOT
+ADD files /
+USER root
+
+# before starting the terracotta server, we update the tc-config.xml configuration file
+ENTRYPOINT /ipv6.sh && ./entrypoint.sh

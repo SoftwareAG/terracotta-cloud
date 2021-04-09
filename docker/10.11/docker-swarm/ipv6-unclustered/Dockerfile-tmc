@@ -1,0 +1,4 @@
+FROM dtr.eur.ad.sag:4443/terracotta/tmc:10.11.0-SNAPSHOT
+ADD files /
+USER root
+ENTRYPOINT /ipv6.sh keep4 && ./entrypoint.sh
