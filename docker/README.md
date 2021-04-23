@@ -32,16 +32,16 @@ All the instructions are present in the sub folders !
 
 That said, here are some command lines worth of mention.
 
-In an unzipped Terracotta kit, 
+In an unzipped Terracotta kit,
 
-* Export the version, either 10.3, 10.5 or 10.7
+* Export the version, 10.3, 10.5, 10.7, etc
 
       export VERSION=10.3
 
 * fetch the docker folder from this repo
 
-      curl -L https://github.com/SoftwareAG/terracotta-cloud/archive/master.tar.gz | tar xvz &&  mv terracotta-cloud-master/docker/$VERSION docker
-    
+      curl -L https://github.com/SoftwareAG/terracotta-cloud/archive/refs/heads/release/${VERSION}.tar.gz | tar xvz &&  mv terracotta-cloud-release-${VERSION}/docker . && rm -rf terracotta-cloud-release-${VERSION}
+
 * Build all the images
 
 ```
@@ -61,7 +61,7 @@ For 10.7 only:
     docker build --file docker/images/config-tool/Dockerfile --tag terracotta-config-tool:$VERSION .
 
 * Run the smoke tests
-    
+
       cd docker/smoke-test
       ./smoke-test.sh
 
