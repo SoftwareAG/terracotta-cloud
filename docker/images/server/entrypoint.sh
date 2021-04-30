@@ -9,13 +9,21 @@ else
     exit 10
 fi
 
-sed -i -r 's/OFFHEAP_RESOURCE1_NAME/'$OFFHEAP_RESOURCE1_NAME'/; s/OFFHEAP_RESOURCE1_UNIT/'$OFFHEAP_RESOURCE1_UNIT'/; s/OFFHEAP_RESOURCE1_SIZE/'$OFFHEAP_RESOURCE1_SIZE'/' conf/tc-cluster-single-node.properties \
-  && sed -i -r 's/OFFHEAP_RESOURCE2_NAME/'$OFFHEAP_RESOURCE2_NAME'/; s/OFFHEAP_RESOURCE2_UNIT/'$OFFHEAP_RESOURCE2_UNIT'/; s/OFFHEAP_RESOURCE2_SIZE/'$OFFHEAP_RESOURCE2_SIZE'/' conf/tc-cluster-single-node.properties \
-  && sed -i -r 's/DATA_RESOURCE1/'$DATA_RESOURCE1'/g; s/DATA_RESOURCE2/'$DATA_RESOURCE2'/g' conf/tc-cluster-single-node.properties \
-  && sed -i -r 's/HOSTNAME/'$HOSTNAME'/g' conf/tc-cluster-single-node.properties \
+if [ ! -f "$CONFIGS_DIRECTORY/tc-config.xml" ]; then
+    echo "config file missing at $CONFIGS_DIRECTORY/tc-config.xml"
+    exit 20
+fi
 
-# chown in a volume can be problematic : if the volume is a nfs mount, maybe root can't (and don't need to) chown it for example...
-su sagadmin -c "test -w $BACKUPS_DIRECTORY" || (echo "$BACKUPS_DIRECTORY not writeable by sagadmin, trying to chown it" && chown -R sagadmin:sagadmin $BACKUPS_DIRECTORY)
-su sagadmin -c "test -w $DATAROOTS_DIRECTORY" || (echo "$DATAROOTS_DIRECTORY not writeable by sagadmin, trying to chown it" && chown -R sagadmin:sagadmin $DATAROOTS_DIRECTORY)
+if [ ! -f "$LICENSE_DIRECTORY/license.key" ]; then
+    echo "license file missing at $LICENSE_DIRECTORY/license.key"
+    exit 30
+fi
 
-su -c "bin/start-tc-server.sh -f conf/tc-cluster-single-node.properties" sagadmin;
+# Replacing the value of OFFHEAP_ENABLED and OFFHEAP_MAX_SIZE as passed in via environment variable.
+sed -i -r 's/OFFHEAP_SIZE/'$OFFHEAP_SIZE'/' $CONFIGS_DIRECTORY/tc-config.xml \
+  && sed -i -r 's/TC_SERVER1/'$TC_SERVER1'/g; s/TC_SERVER2/'$TC_SERVER2'/g' $CONFIGS_DIRECTORY/tc-config.xml
+
+# Changing permission for sagadmin home directory.
+chown -R sagadmin:sagadmin $SAG_HOME
+
+su -c "bin/start-tc-server.sh -f $CONFIGS_DIRECTORY/tc-config.xml -n $HOSTNAME" sagadmin;

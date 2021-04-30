@@ -8,6 +8,7 @@ set -x
 source "util.sh"
 
 function cleanup {
+   cd docker/smoke-test	
   ./smoke-test-cleanup.sh
 }
 
@@ -26,71 +27,56 @@ if [ -z "$version" ]; then
     exit 1
 fi
 
+cd ../..
 
-header "Starting Terracotta Server"
-terracotta_id=$(docker run -e ACCEPT_EULA=Y --name terracotta --hostname terracotta -p 9410:9410 -d terracotta-server:$version)
+mkdir config-1
+mkdir config-2
+mkdir license
 
-# Ensure the terracotta server container started.
-container_running "$terracotta_id"
-validate_result "docker logs $terracotta_id" "cat" "Server started as default-node1" "terracotta server couldn't properly started"
+#allow access to docker user to create files in config directory which will be mounted
+#this is just for example, please provide only enough premissions while deploying in production
+chmod 777 config-1 config-2
 
+cp docker/images/server/config/tc-config.xml config-1
+cp docker/images/server/config/tc-config.xml config-2
+cp terracotta-license.key license
+mv license/terracotta-license.key license/license.key
 
+abs_path=$(pwd)
 
-header "Activating Terracotta Cluster using config-tool"
-docker run -i -e ACCEPT_EULA=Y -e LICENSE_URL=https://iwiki.eur.ad.sag/download/attachments/492808213/Terracotta-10.5-linux-unlimited.xml?api=v2 --name config-tool --link terracotta:terracotta terracotta-config-tool:$version activate -l /licenses/license.xml -n "tc-cluster" -s "terracotta"
+echo $abs_path
 
-# Checking is the cluster is properly configured.
-if [ "$(echo $?)" != '0' ]; then
-    echo "Failed to configure the terracotta cluster"
-    exit 11
-fi
+header "Starting Terracotta Servers"
+terracotta1_id=$(docker run -d -p 9510:9510 -p 9530:9530 -p 9540:9540 -e ACCEPT_EULA=Y -e TC_SERVER1=terracotta-1 -e TC_SERVER2=terracotta-2 \
+            -v "$abs_path/config-1":/configs/ -v "$abs_path/license":/licenses/ \
+            -h terracotta-1 --name terracotta-1 terracotta:$version)
 
+container_running "$terracotta1_id"
+validate_result "docker logs $terracotta1_id" "cat" "ACTIVE-COORDINATOR" "terracotta server couldn't properly started"
 
+terracotta2_id=$(docker run -d -p 9610:9510 -p 9630:9530 -p 9640:9540 -e ACCEPT_EULA=Y -e TC_SERVER1=terracotta-1 -e TC_SERVER2=terracotta-2 \
+              -v "$abs_path/config-2":/configs/ -v "$abs_path/license":/licenses/ \
+              -h terracotta-2 --name terracotta-2 --link terracotta-1:terracotta-1 terracotta:$version)
 
+container_running "$terracotta2_id"
+
+docker rm -f $terracotta1_id
+
+terracotta1_id=$(docker run -d -p 9510:9510 -p 9530:9530 -p 9540:9540 -e ACCEPT_EULA=Y -e TC_SERVER1=terracotta-1 -e TC_SERVER2=terracotta-2 \
+              -v "$abs_path/config-1":/configs/ -v "$abs_path/license":/licenses/ \
+              -h terracotta-1 --name terracotta-1 --link terracotta-2:terracotta-2 terracotta:$version)
+
+validate_result "docker logs $terracotta2_id" "cat" "ACTIVE-COORDINATOR" "terracotta server couldn't properly started"
 
 header "Starting TMC Server"
-tmc_id=$(docker run -d -e ACCEPT_EULA=Y -e TMS_DEFAULTURL=terracotta://terracotta:9410 --name tmc --link terracotta:terracotta -p 19480:9480 tmc:$version)
+tmc_id=$(docker run -d -p 9889:9889 -e ACCEPT_EULA=Y -v "$abs_path/license":/licenses --name tmc --link terracotta-1:terracotta-1 --link terracotta-2:terracotta-2 tmc:$version)
 
 # Ensure the tmc container started.
 container_running "$tmc_id"
-validate_result "docker logs $tmc_id" "cat" "Undertow started" "couldn't start tmc."
-
-
-
-
-header "Validating the created cluster"
-# Ensuring TMC is able to proble the cluster.
-validate_result "curl http://localhost:19480/api/connections/probe?uri=terracotta%3A%2F%2Fterracotta%3A9410" "jq --raw-output .connectionName" "tc-cluster" "Cluster is not accessible from TMC."
-
-
-# Ensuring TMC is able to connect with the cluster
-probe_json=$(curl http://localhost:19480/api/connections/probe?uri=terracotta%3A%2F%2Fterracotta%3A9410)
-connection_json=$(curl -H "Content-Type: application/json" -X POST -d "$probe_json" http://localhost:19480/api/connections)
-offline_reason=$(echo "$connection_json" | jq --raw-output '.status.offlineReason')
-if [ "$offline_reason" != "Connection is up and rocking!" ]; then
-    echo "Couldn't connect with the cluster from TMC."
-    exit 12
-fi
-
 
 header "Validating Ehcache client"
-ehcache_client_id=$(docker run -d -e ACCEPT_EULA=Y -e TERRACOTTA_SERVER_URL=terracotta:9410 --name ehcache-client --link terracotta:terracotta sample-ehcache-client:$version)
+ehcache_client_id=$(docker run -d -e ACCEPT_EULA=Y -v "$abs_path/license":/licenses/ --link terracotta-2:terracotta-2 --link terracotta-1:terracotta-1 --name ehcache-client ehcache-client:$version)
 
 # Ensure the ehcache client container started.
 container_running "$ehcache_client_id"
-
-# Checking ehcache client reflected in tmc.
-validate_result "curl http://localhost:19480/api/connections" 'jq --raw-output ."tc-cluster".runtime.ehcacheServerEntities.MyCacheManager.resourcePools."my-resource-pool".offheapResource' "offheap-1" "ehcache client couldn't connect to the cluster"
-
-
-
-
-
-header "Validating TCStore client"
-store_client_id=$(docker run -d -e ACCEPT_EULA=Y -e TERRACOTTA_SERVER_URL=terracotta:9410 --name store-client --link terracotta:terracotta sample-tcstore-client:$version)
-
-# Ensure the store client container started.
-container_running "$store_client_id"
-
-# Checking store client is reflected in tmc.
-validate_result "curl http://localhost:19480/api/connections" 'jq --raw-output ."tc-cluster".runtime.datasetServerEntities."MyDataset-1".offheapResourceName' "offheap-2" "store client couldn't connect to the cluster"
+validate_result "docker logs $ehcache_client_id" "cat" "Getting" "ehcache client not working"
