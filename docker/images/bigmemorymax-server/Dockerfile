@@ -12,8 +12,8 @@ ADD https://confluence.terracotta.org/download/attachments/29557169/TAB_4.3.8_Do
  $SAG_HOME/legal/TAB_4.3.8_Docker_terms.pdf
 
 COPY ./server/ $SAG_HOME/server/
-COPY docker/images/server/config/tc.custom.log4j.properties $SAG_HOME/server/.tc.custom.log4j.properties
-COPY docker/images/server/entrypoint.sh $SAG_HOME/server/entrypoint.sh
+COPY docker/images/bigmemorymax-server/config/tc.custom.log4j.properties $SAG_HOME/server/.tc.custom.log4j.properties
+COPY docker/images/bigmemorymax-server/entrypoint.sh $SAG_HOME/server/entrypoint.sh
 
 # /configs is an optional volume you can use to deploy configuration files
 ENV CONFIGS_DIRECTORY "/configs/"

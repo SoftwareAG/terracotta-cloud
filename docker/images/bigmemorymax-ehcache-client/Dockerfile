@@ -11,8 +11,8 @@ COPY ./legal $SAG_HOME/legal
 ADD https://confluence.terracotta.org/download/attachments/29557169/TAB_4.3.8_Docker_terms.pdf?version=1&amp;modificationDate=1618838998179&amp;api=v2 \
  $SAG_HOME/legal/TAB_4.3.8_Docker_terms.pdf
 
-COPY docker/images/client/src/ ./
-COPY docker/images/client/entrypoint.sh ./entrypoint.sh
+COPY docker/images/bigmemorymax-ehcache-client/src/ ./
+COPY docker/images/bigmemorymax-ehcache-client/entrypoint.sh ./entrypoint.sh
 COPY apis/ ./apis/
 COPY code-samples/lib/slf4j-jdk14-1.7.25.jar ./apis/slf4j-jdk14-1.7.25.jar
 

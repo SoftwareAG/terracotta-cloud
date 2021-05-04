@@ -12,8 +12,8 @@ ADD https://confluence.terracotta.org/download/attachments/29557169/TAB_4.3.8_Do
  $SAG_HOME/legal/TAB_4.3.8_Docker_terms.pdf
 
 # adding some default configuration files to configure the tmc in non authenticated mode with a connection to tsa:9540 already set-up
-COPY docker/images/tmc/config/ $SAG_HOME/.tc/mgmt/
-COPY docker/images/tmc/entrypoint.sh $SAG_HOME/entrypoint.sh
+COPY docker/images/bigmemorymax-tmc/config/ $SAG_HOME/.tc/mgmt/
+COPY docker/images/bigmemorymax-tmc/entrypoint.sh $SAG_HOME/entrypoint.sh
 COPY tools/management-console/ $SAG_HOME/
 
 ENV LICENSE_DIRECTORY "/licenses/"
