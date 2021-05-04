@@ -26,8 +26,6 @@ if [ -z "$version" ]; then
     exit 1
 fi
 
-cd ../..
-
 mkdir config-1
 mkdir config-2
 mkdir license
@@ -36,10 +34,9 @@ mkdir license
 #this is just for example, please provide only enough premissions while deploying in production
 chmod 777 config-1 config-2
 
-cp docker/images/bigmemorymax-server/config/tc-config.xml config-1
-cp docker/images/bigmemorymax-server/config/tc-config.xml config-2
-cp terracotta-license.key license
-mv license/terracotta-license.key license/license.key
+cp ../../docker/images/bigmemorymax-server/config/tc-config.xml config-1
+cp ../../docker/images/bigmemorymax-server/config/tc-config.xml config-2
+cp ../../terracotta-license.key license/license.key
 
 abs_path=$(pwd)
 
