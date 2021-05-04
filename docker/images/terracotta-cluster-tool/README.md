@@ -67,4 +67,4 @@ For example, the cluster tool can be used to:
 To build this Dockerfile
 
     $ cd terracotta-10.5.0-SNAPSHOT
-    $ docker build --file docker/images/cluster-tool/Dockerfile --tag terracotta-cluster-tool:10.5.0-SNAPSHOT .
+    $ docker build --file docker/images/terracotta-cluster-tool/Dockerfile --tag terracotta-cluster-tool:10.5.0-SNAPSHOT .

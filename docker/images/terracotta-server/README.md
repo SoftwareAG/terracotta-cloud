@@ -31,4 +31,4 @@ It's now ready and waiting for clients !
 To build this Dockerfile
 
     $ cd terracotta-10.5.0-SNAPSHOT
-    $ docker build --file docker/images/server/Dockerfile --tag terracotta-server:10.5.0-SNAPSHOT .
+    $ docker build --file docker/images/terracotta-server/Dockerfile --tag terracotta-server:10.5.0-SNAPSHOT .
