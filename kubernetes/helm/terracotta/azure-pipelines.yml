@@ -63,4 +63,4 @@ steps:
   env:
     GITHUB_AUTH: $(gh_user):$(gh_token)
   displayName: 'Commit Helm Charts'
-  condition: not(eq(variables['Build.Reason'], 'PullRequest'))
+  condition: and(not(eq(variables['Build.Reason'], 'PullRequest')), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
