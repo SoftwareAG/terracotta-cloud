@@ -8,4 +8,4 @@ set -x
 source "util.sh"
 
 header "Stop and Remove all containers"
-docker rm -f terracotta-1 terracotta-2 tmc ehcache-client
+docker rm -f terracotta-1 terracotta-2 tmc ehcache-client ; true  # ignore any failures
