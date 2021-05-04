@@ -20,6 +20,7 @@ function validate_result() {
     processor=$2
     result=$3
     error=$4
+    error_action=$5
 
     for i in {1..5}; do
         result_resp=$(${command} | ${processor} | grep "${result}")
@@ -38,11 +39,12 @@ function validate_result() {
     done
 
     echo "$error"
+    $error_action
     exit 10
 }
 
 
 function container_running() {
     container_id=$1
-    validate_result "docker inspect $container_id" "jq --raw-output .[0].State.Status" "running" "couldn't have container '$container_id' to running status."
+    validate_result "docker inspect $container_id" "jq --raw-output .[0].State.Status" "running" "couldn't have container '$container_id' to running status." "docker logs $container_id"
 }
