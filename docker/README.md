@@ -45,10 +45,10 @@ In an unzipped Terracotta kit,
 * Build all the images
 
 ```
-docker build --file docker/images/cluster-tool/Dockerfile --tag terracotta-cluster-tool:$VERSION .
+docker build --file docker/images/terracotta-cluster-tool/Dockerfile --tag terracotta-cluster-tool:$VERSION .
 docker build --file docker/images/sample-ehcache-client/Dockerfile --tag sample-ehcache-client:$VERSION .
 docker build --file docker/images/sample-tcstore-client/Dockerfile --tag sample-tcstore-client:$VERSION .
-docker build --file docker/images/server/Dockerfile --tag terracotta-server:$VERSION .
+docker build --file docker/images/terracotta-server/Dockerfile --tag terracotta-server:$VERSION .
 docker build --file docker/images/tmc/Dockerfile --tag tmc:$VERSION .
 ```
 For 10.3 only:
@@ -58,7 +58,7 @@ For 10.3 only:
 
 For 10.7 only:
 
-    docker build --file docker/images/config-tool/Dockerfile --tag terracotta-config-tool:$VERSION .
+    docker build --file docker/images/terracotta-config-tool/Dockerfile --tag terracotta-config-tool:$VERSION .
 
 * Run the smoke tests
 

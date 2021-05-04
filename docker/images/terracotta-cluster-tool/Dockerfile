@@ -9,7 +9,7 @@ COPY ./legal $SAG_HOME/legal
 ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.3_THIRD_PARTY_TERMS.pdf?version=1&modificationDate=1539787811711&api=v2 \
  $SAG_HOME/legal/TDB_10.3_THIRD_PARTY_TERMS.pdf
 
-COPY docker/images/cluster-tool/entrypoint.sh $SAG_HOME/cluster-tool/
+COPY docker/images/terracotta-cluster-tool/entrypoint.sh $SAG_HOME/cluster-tool/
 COPY ./tools/cluster-tool/ $SAG_HOME/cluster-tool/
 COPY ./tools/common/ $SAG_HOME/common/
 

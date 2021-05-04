@@ -12,10 +12,10 @@ ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.3_THI
  $SAG_HOME/legal/TDB_10.3_THIRD_PARTY_TERMS.pdf
 
 COPY ./server/ $SAG_HOME/server/
-COPY docker/images/server/conf/tc-config-single-node.xml $SAG_HOME/server/conf/tc-config-single-node.xml
-COPY docker/images/server/conf/tc-config-active-passive.xml $SAG_HOME/server/conf/tc-config-active-passive.xml
-COPY docker/images/server/conf/logback.xml $SAG_HOME/server/lib/logback-test.xml
-COPY docker/images/server/entrypoint.sh $SAG_HOME/server/entrypoint.sh
+COPY docker/images/terracotta-server/conf/tc-config-single-node.xml $SAG_HOME/server/conf/tc-config-single-node.xml
+COPY docker/images/terracotta-server/conf/tc-config-active-passive.xml $SAG_HOME/server/conf/tc-config-active-passive.xml
+COPY docker/images/terracotta-server/conf/logback.xml $SAG_HOME/server/lib/logback-test.xml
+COPY docker/images/terracotta-server/entrypoint.sh $SAG_HOME/server/entrypoint.sh
 
 # /data/dataroots/ will persist data roots (FRS persistence for example); better not be on container filesystem !
 ENV DATAROOTS_DIRECTORY "/data/dataroots/"
