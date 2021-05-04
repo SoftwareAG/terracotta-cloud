@@ -11,8 +11,8 @@ ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.7_Doc
 ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.7_Docker_properties.pdf?api=v2 \
  $SAG_HOME/legal/TDB_10.7_Docker_properties.pdf
 
-COPY docker/images/config-tool/entrypoint.sh $SAG_HOME/config-tool/
-COPY docker/images/server/conf/tc-cluster-single-node.properties $SAG_HOME/config-tool/conf
+COPY docker/images/terracotta-config-tool/entrypoint.sh $SAG_HOME/config-tool/
+COPY docker/images/terracotta-server/conf/tc-cluster-single-node.properties $SAG_HOME/config-tool/conf
 COPY ./tools/ $SAG_HOME/config-tool/
 
 # if you have a directory on your docker node that contains a license named license.xml, bind it to this volume !
