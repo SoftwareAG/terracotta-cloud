@@ -1,17 +1,34 @@
-Copyright (c) 2011-2019 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.
-Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG
-
 #What is the Terracotta Management Console?
 
-The Terracotta Management Console (TMC) is a web-based administration and monitoring application allowing you to monitor and manage your Terracotta products (Ehcache, Tcstore, Terracotta Server Array)
+The Terracotta Management Console (TMC) is a web-based administration and monitoring application allowing you to monitor and manage your Terracotta products (Ehcache, Terracotta Server Array)
+
+#How to build this image
+
+Once Docker is up and running in your environment, from the root folder (/opt/softwareag for example) run this command :
+
+    docker build --file docker/images/tmc/Dockerfile --tag tmc:$VERSION .
 
 #How to use this image: QuickStart
 
 You can now run the TMC in a container :
 
-     docker run -e ACCEPT_EULA=Y -d -p 9480:9480 --name tmc tmc:10.11.0-SNAPSHOT
+- Using external license
+    - Create <license-directory> having `license.key` file
 
-At this point go to http://localhost:9480/ from the host machine to see the TMC welcome page
+        
+    docker run -d -p 9889:9889 -v <license-directory>:/licenses --name tmc tmc:$VERSION
+
+At this point go to http://localhost:9889/ from the host machine to see the TMC welcome page
+
+By default the TMC will run with security disabled (no authentication, anonymous user have all roles)
+
+If you want to change those default settings, [click on the "settings" button](https://terracotta.org/generated/4.3.0/html/bmm-all/#page/BigMemory_Max_Documentation_Set%2Fco-use_connections_and_settings.html%23wwconnect_header).
+
+If you're invited to restart the TMC while changing the security configuration, just restart your container :
+
+    docker restart tmc
+
+And go back to http://localhost:9889
 
 #How to use this image: with a Terracotta Server
 
@@ -19,27 +36,16 @@ Of course, having a TMC running only makes sense if you have a Terracotta Server
 
 If you have already built the terracotta docker image, then, start it :
 
-    docker run -e ACCEPT_EULA=Y -d -p 9410:9410 --name terracotta terracotta-server:10.11.0-SNAPSHOT
+    docker run -d -p 9510:9510 --name terracotta terracotta
 
-Don't forget to install a license using the cluster tool :
+and then try running the tmc, with :
 
-    docker run -e ACCEPT_EULA=Y --link terracotta:terracotta -e "LICENSE_URL=https://server/license.xml" terracotta-cluster-tool:10.11.0-SNAPSHOT configure -n MyCluster -s terracotta
-
-and then re try running the tmc, with :
-
-    docker run -e ACCEPT_EULA=Y -d -p 9480:9480 --name tmc --link terracotta:terracotta tmc:10.11.0-SNAPSHOT
+     docker run -d -p 9889:9889 -e ACCEPT_EULA=Y -v /path/to/license-folder:/licenses --name tmc tmc:$VERSION
 
 and checkout what's happening with :
 
     docker logs -f tmc
 
-Now you can create a new connection, and use terracotta://terracotta as your Terracotta server URL
+Now you can create a new connection, and use http://terracotta:9540 as your Terracotta server URL
 
 Or else, I suggest you to move on to the orchestration folder and use Docker compose to orchestrate your containers.
-
-#How to build this image
-
-Once Docker is up and running in your environment, from the root folder (/opt/softwareag for example) run this command :
-
-    $ cd terracotta-10.11.0-SNAPSHOT
-    $ docker build --file docker/images/tmc/Dockerfile --tag tmc:10.11.0-SNAPSHOT .

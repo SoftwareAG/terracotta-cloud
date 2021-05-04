@@ -6,16 +6,30 @@ After you've locally build the images, you want to quickly check whether they se
 
 Those scripts will help you find out, they basically:
 
-* Run a Terracotta Server
-* Configure it with the config tool
+* Run both the Terracotta Servers in cluster
 * Run a Terracotta Management Console (TMC)
 * Assert the tmc "sees" the servers and its resources
 * Run an ehcache client and assert the TMC can "see" the caches
-* Run an store client and assert the TMC can "see" the datasets
 
 ## How to run them
 
 ```bash
-export VERSION=10.11.0-SNAPSHOT
+export VERSION=4.3.8
+
+Downloaf the tar ball
+tar -xvf <tar-ball>
+
+cd <unzipped Folder>
+
+cp -r terracotta-cloud/docker/ ./docker
+
+docker build --file docker/images/server/Dockerfile --tag terracotta:$VERSION .
+
+docker build --file docker/images/tmc/Dockerfile --tag tmc:$VERSION .
+
+docker build -f docker/images/client/Dockerfile --tag ehcache-client:$VERSION .
+
+Put license file terracotta-license.key in <unzipped folder>
+
 ./smoke-test.sh
 ```

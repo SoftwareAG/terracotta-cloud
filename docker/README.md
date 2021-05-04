@@ -1,15 +1,9 @@
-# Docker Images definitions for Terracotta 10 Enterprise
-
-## Goal
-
-The Terracotta Docker images for Terracotta 10 are distributed officially via [Docker Cloud](https://hub.docker.com/_/softwareag-terracottadb).
-
-If you're curious how those images are built, read on! Those Dockerfiles are the ones we use to build the Terracotta 10 images.
+# Docker Images definitions for Terracotta Big Memory
 
 ## Requirements to build
 
 * You'll need to locally have a "native" kit, unzipped - [you can get one from Terracotta.org](http://www.terracotta.org/downloads/)
-* A Terracotta license  ([you can start using trial ones](https://www.terracotta.org/retriever.php?n=TerracottaDB101linux.xml ))
+* A Terracotta license  
 * A base image with a Java JVM. (the ones we used are usually based on [CentOS](https://hub.docker.com/_/centos) or [UBI](https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image) with a [Zulu JVM](https://www.azul.com/downloads/zulu-community/))
 
 Replacing our base image would look like:
@@ -34,31 +28,19 @@ That said, here are some command lines worth of mention.
 
 In an unzipped Terracotta kit,
 
-* Export the version, 10.3, 10.5, 10.7, etc
+* Export the version
 
-      export VERSION=10.3
+      export VERSION=4.3.X
 
 * fetch the docker folder from this repo
-
-      curl -L https://github.com/SoftwareAG/terracotta-cloud/archive/refs/heads/release/${VERSION}.tar.gz | tar xvz &&  mv terracotta-cloud-release-${VERSION}/docker . && rm -rf terracotta-cloud-release-${VERSION}
 
 * Build all the images
 
 ```
-docker build --file docker/images/cluster-tool/Dockerfile --tag terracotta-cluster-tool:$VERSION .
-docker build --file docker/images/sample-ehcache-client/Dockerfile --tag sample-ehcache-client:$VERSION .
-docker build --file docker/images/sample-tcstore-client/Dockerfile --tag sample-tcstore-client:$VERSION .
-docker build --file docker/images/server/Dockerfile --tag terracotta-server:$VERSION .
+docker build --file docker/images/server/Dockerfile --tag terracotta:$VERSION .
 docker build --file docker/images/tmc/Dockerfile --tag tmc:$VERSION .
+docker build -f docker/images/client/Dockerfile --tag ehcache-client:$VERSION .N .
 ```
-For 10.3 only:
-
-    docker build --file docker/images/websessions-cart-example/Dockerfile --tag websessions-cart-example:$VERSION .
-
-
-For 10.7 only:
-
-    docker build --file docker/images/config-tool/Dockerfile --tag terracotta-config-tool:$VERSION .
 
 * Run the smoke tests
 

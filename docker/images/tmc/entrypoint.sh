@@ -9,7 +9,12 @@ else
     exit 10
 fi
 
-# chown in a volume can be problematic : if the volume is a nfs mount, maybe root can't (and don't need to) chown it for example...
-su sagadmin -c "test -w $TMS_STORAGEFOLDER" || (echo "$TMS_STORAGEFOLDER not writeable by sagadmin, trying to chown it" && chown -R sagadmin:sagadmin $TMS_STORAGEFOLDER)
+if [ ! -f "$LICENSE_DIRECTORY/license.key" ]; then
+    echo "license file missing at $LICENSE_DIRECTORY/license.key"
+    exit 30
+fi
 
-su -c "bin/start.sh" sagadmin
+# Changing permission for sagadmin home directory.
+chown -R sagadmin:sagadmin $SAG_HOME
+
+su -c "bin/start-tmc.sh" sagadmin;

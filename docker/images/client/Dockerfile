@@ -11,24 +11,20 @@ COPY ./legal $SAG_HOME/legal
 ADD https://confluence.terracotta.org/download/attachments/29557169/TAB_4.3.8_Docker_terms.pdf?version=1&amp;modificationDate=1618838998179&amp;api=v2 \
  $SAG_HOME/legal/TAB_4.3.8_Docker_terms.pdf
 
-COPY ./server/ $SAG_HOME/server/
-COPY docker/images/server/config/tc.custom.log4j.properties $SAG_HOME/server/.tc.custom.log4j.properties
-COPY docker/images/server/entrypoint.sh $SAG_HOME/server/entrypoint.sh
-
-# /configs is an optional volume you can use to deploy configuration files
-ENV CONFIGS_DIRECTORY "/configs/"
-VOLUME $CONFIGS_DIRECTORY
+COPY docker/images/client/src/ ./
+COPY docker/images/client/entrypoint.sh ./entrypoint.sh
+COPY apis/ ./apis/
+COPY code-samples/lib/slf4j-jdk14-1.7.25.jar ./apis/slf4j-jdk14-1.7.25.jar
 
 ENV LICENSE_DIRECTORY "/licenses/"
 VOLUME $LICENSE_DIRECTORY
 
-# all below commands will now be relative to this path
-WORKDIR $SAG_HOME/server
+ENV CLASSPATH ".:./apis/ehcache-ee-terracotta-client-all.jar\
+:./apis/ehcache/lib/\
+:./apis/toolkit/lib/\
+:./apis/slf4j-jdk14-1.7.25.jar"
 
-EXPOSE 9510 9530 9540
-
-# default values for offheap, that you can override when starting your container with docker run -e OFFHEAP_RESOURCE1_SIZE=512 for example
-ENV OFFHEAP_SIZE "2g"
+ENV TERRACOTTA_SERVER_URL=terracotta-1:9510,terracotta-2:9510
 
 # make the JVM aware of the container memory constraints, since JDK 8u131
 # see https://blog.csanchez.org/2017/05/31/running-a-jvm-in-a-container-without-getting-killed
@@ -37,5 +33,7 @@ ENV JAVA_OPTS "-Dcom.tc.productkey.path=$LICENSE_DIRECTORY/license.key -XX:+Unlo
 # the entrypoint needs to be run as root while setting up the config; it run the JVM process as sagadmin though
 USER root
 
-# before starting the terracotta server, we update the tc-config.xml configuration file
+RUN javac ClientDoingInsertionsAndRetrievals.java
+
+# using the startup script as the entrypoint
 ENTRYPOINT ["./entrypoint.sh"]
