@@ -17,7 +17,7 @@ Hibernate. You can additionally integrate it with third-party products such as C
 Once Docker is up and running in your environment, from the root folder (/opt/softwareag for example) run this command :
 
     export VERSION=4.3.8
-    docker build --file docker/images/server/Dockerfile --tag terracotta:$VERSION .
+    docker build --file docker/images/bigmemorymax-server/Dockerfile --tag terracotta:$VERSION .
 
 #How to use this image: QuickStart
 

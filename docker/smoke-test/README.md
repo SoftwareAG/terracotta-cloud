@@ -23,11 +23,11 @@ cd <unzipped Folder>
 
 cp -r terracotta-cloud/docker/ ./docker
 
-docker build --file docker/images/server/Dockerfile --tag terracotta:$VERSION .
+docker build --file docker/images/bigmemorymax-server/Dockerfile --tag terracotta:$VERSION .
 
-docker build --file docker/images/tmc/Dockerfile --tag tmc:$VERSION .
+docker build --file docker/images/bigmemorymax-tmc/Dockerfile --tag tmc:$VERSION .
 
-docker build -f docker/images/client/Dockerfile --tag ehcache-client:$VERSION .
+docker build -f docker/images/bigmemorymax-ehcache-client/Dockerfile --tag ehcache-client:$VERSION .
 
 Put license file terracotta-license.key in <unzipped folder>
 

@@ -37,8 +37,8 @@ mkdir license
 #this is just for example, please provide only enough premissions while deploying in production
 chmod 777 config-1 config-2
 
-cp docker/images/server/config/tc-config.xml config-1
-cp docker/images/server/config/tc-config.xml config-2
+cp docker/images/bigmemorymax-server/config/tc-config.xml config-1
+cp docker/images/bigmemorymax-server/config/tc-config.xml config-2
 cp terracotta-license.key license
 mv license/terracotta-license.key license/license.key
 
