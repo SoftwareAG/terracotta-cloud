@@ -11,7 +11,7 @@ ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.7_Doc
 ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.7_Docker_properties.pdf?api=v2 \
  $SAG_HOME/legal/TDB_10.7_Docker_properties.pdf
 
-COPY docker/images/cluster-tool/entrypoint.sh $SAG_HOME/cluster-tool/
+COPY docker/images/terracotta-cluster-tool/entrypoint.sh $SAG_HOME/cluster-tool/
 COPY ./tools $SAG_HOME/cluster-tool/
 
 # /configs is an optional volume you can use to deploy configuration files

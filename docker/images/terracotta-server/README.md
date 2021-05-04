@@ -31,4 +31,4 @@ It's now ready to be configured using config-tool !
 To build this Dockerfile
 
     $ cd terracotta-10.7.0-SNAPSHOT
-    $ docker build --file docker/images/server/Dockerfile --tag terracotta-server:10.7.0-SNAPSHOT .
+    $ docker build --file docker/images/terracotta-server/Dockerfile --tag terracotta-server:10.7.0-SNAPSHOT .

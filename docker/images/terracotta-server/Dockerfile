@@ -14,9 +14,9 @@ ADD https://confluence.terracotta.org/download/attachments/29557169/TDB_10.7_Doc
  $SAG_HOME/legal/TDB_10.7_Docker_properties.pdf
 
 COPY ./server/ $SAG_HOME/server/
-COPY docker/images/server/conf/tc-cluster-single-node.properties $SAG_HOME/server/conf/tc-cluster-single-node.properties
-COPY docker/images/server/conf/logback.xml $SAG_HOME/server/lib/logback-test.xml
-COPY docker/images/server/entrypoint.sh $SAG_HOME/server/entrypoint.sh
+COPY docker/images/terracotta-server/conf/tc-cluster-single-node.properties $SAG_HOME/server/conf/tc-cluster-single-node.properties
+COPY docker/images/terracotta-server/conf/logback.xml $SAG_HOME/server/lib/logback-test.xml
+COPY docker/images/terracotta-server/entrypoint.sh $SAG_HOME/server/entrypoint.sh
 
 # /data/dataroots/ will persist data roots (FRS persistence for example); better not be on container filesystem !
 ENV DATAROOTS_DIRECTORY "/data/dataroots/"
