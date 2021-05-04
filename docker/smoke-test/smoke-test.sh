@@ -8,7 +8,6 @@ set -x
 source "util.sh"
 
 function cleanup {
-   cd docker/smoke-test	
   ./smoke-test-cleanup.sh
 }
 
