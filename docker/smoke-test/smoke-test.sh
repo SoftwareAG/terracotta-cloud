@@ -48,7 +48,7 @@ terracotta1_id=$(docker run -d -p 9510:9510 -p 9530:9530 -p 9540:9540 -e ACCEPT_
             -h terracotta-1 --name terracotta-1 bigmemorymax-server:$version)
 
 container_running "$terracotta1_id"
-validate_result "docker logs $terracotta1_id" "cat" "ACTIVE-COORDINATOR" "terracotta server couldn't properly started"
+validate_result "docker logs $terracotta1_id" "cat" "ACTIVE-COORDINATOR" "terracotta server couldn't properly started" "docker logs $terracotta1_id"
 
 terracotta2_id=$(docker run -d -p 9610:9510 -p 9630:9530 -p 9640:9540 -e ACCEPT_EULA=Y -e TC_SERVER1=terracotta-1 -e TC_SERVER2=terracotta-2 \
               -v "$abs_path/config-2":/configs/ -v "$abs_path/license":/licenses/ \
@@ -62,7 +62,7 @@ terracotta1_id=$(docker run -d -p 9510:9510 -p 9530:9530 -p 9540:9540 -e ACCEPT_
               -v "$abs_path/config-1":/configs/ -v "$abs_path/license":/licenses/ \
               -h terracotta-1 --name terracotta-1 --link terracotta-2:terracotta-2 bigmemorymax-server:$version)
 
-validate_result "docker logs $terracotta2_id" "cat" "ACTIVE-COORDINATOR" "terracotta server couldn't properly started"
+validate_result "docker logs $terracotta2_id" "cat" "ACTIVE-COORDINATOR" "terracotta server couldn't properly started" "docker logs $terracotta2_id"
 
 header "Starting TMC Server"
 tmc_id=$(docker run -d -p 9889:9889 -e ACCEPT_EULA=Y -v "$abs_path/license":/licenses --name tmc --link terracotta-1:terracotta-1 --link terracotta-2:terracotta-2 bigmemorymax-tmc:$version)
@@ -75,4 +75,4 @@ ehcache_client_id=$(docker run -d -e ACCEPT_EULA=Y -v "$abs_path/license":/licen
 
 # Ensure the ehcache client container started.
 container_running "$ehcache_client_id"
-validate_result "docker logs $ehcache_client_id" "cat" "Getting" "ehcache client not working"
+validate_result "docker logs $ehcache_client_id" "cat" "Getting" "ehcache client not working" "docker logs $ehcache_client_id"
