@@ -16,7 +16,7 @@ Hibernate. You can additionally integrate it with third-party products such as C
 
 Once Docker is up and running in your environment, from the root folder (/opt/softwareag for example) run this command :
 
-    export VERSION=4.3.9
+    export VERSION=4.3.10
     docker build --file docker/images/bigmemorymax-server/Dockerfile --tag terracotta:$VERSION .
 
 #How to use this image: QuickStart
@@ -33,13 +33,13 @@ From the server directory
               -v /path/to/config-folder-server1:/configs/ 
               -v /path/to/license-folder:/licenses/ 
               -h terracotta-1 
-              --name terracotta-1 terracotta:4.3.9
+              --name terracotta-1 terracotta:4.3.10
 
   docker run -d -p 9510:9510 -e ACCEPT_EULA=Y -e TC_SERVER1=terracotta-1 -e TC_SERVER2=terracotta-2
               -v /path/to/config-folder-server2:/configs/
               -v /path/to/license-folder:/licenses/
               -h terracotta-2
-              --name terracotta-2 terracotta:4.3.9
+              --name terracotta-2 terracotta:4.3.10
 
 
 At this point go to http://localhost:9510/config from the host machine to see the configuration of your Terracotta Server Array.

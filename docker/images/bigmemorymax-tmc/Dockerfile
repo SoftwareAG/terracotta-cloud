@@ -8,8 +8,8 @@ LABEL maintainers="Abhilash <Abhilash.Abhilash@softwareag.com>"
 
 # SAG_HOME is defined to /opt/softwareag in the base image
 COPY ./legal $SAG_HOME/legal
-ADD https://confluence.terracotta.org/download/attachments/29557169/TAB_4.3.9_Docker_terms.pdf?version=1&amp;modificationDate=1618838998179&amp;api=v2 \
- $SAG_HOME/legal/TAB_4.3.9_Docker_terms.pdf
+ADD https://confluence.terracotta.org/download/attachments/29557169/TAB_4.3.10_Docker_terms.pdf?version=1&amp;modificationDate=1618838998179&amp;api=v2 \
+ $SAG_HOME/legal/TAB_4.3.10_Docker_terms.pdf
 
 # adding some default configuration files to configure the tmc in non authenticated mode with a connection to tsa:9540 already set-up
 COPY docker/images/bigmemorymax-tmc/config/ $SAG_HOME/.tc/mgmt/
