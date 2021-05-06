@@ -14,7 +14,7 @@ Those scripts will help you find out, they basically:
 ## How to run them
 
 ```bash
-export VERSION=4.3.8
+export VERSION=4.3.9
 
 Downloaf the tar ball
 tar -xvf <tar-ball>
