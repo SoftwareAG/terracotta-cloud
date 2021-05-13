@@ -9,7 +9,7 @@
 Replacing our base image would look like:
 
 ```dockerfile
-#FROM dtr.eur.ad.sag:4443/ibit/ubi7:ubi-7-jdk-test
+#FROM iregistry.eur.ad.sag/ibit/ubi7:ubi-7-jdk-test
 FROM centos:7
 ENV SAG_HOME=/opt/softwareag     
 RUN groupadd -g 1724 sagadmin && useradd -u 1724 -m -g 1724 -d ${SAG_HOME} -c "SoftwareAG Admin" sagadmin && mkdir -p ${SAG_HOME} && chown 1724:1724 ${SAG_HOME} && chmod 775 ${SAG_HOME}
