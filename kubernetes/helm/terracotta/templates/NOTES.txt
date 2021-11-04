@@ -10,14 +10,14 @@ For example, you can deploy the sample ehcache client with :
 
 kubectl \
   --namespace={{ .Release.Namespace }} \
-  run ehcache-sample --image={{ .Values.sampleEhCacheImage.repository }}:{{ .Values.tag }} \
+  run ehcache-sample --image={{ .Values.registry }}/{{ .Values.sampleEhCacheImage.name }}:{{ .Values.tag }} \
   --env="ACCEPT_EULA=Y" \
   --env="CLUSTER_NAME={{ template "terracotta.fullname" . }}" \
   --env="TERRACOTTA_SERVER_URL={{ template "terracotta.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"
 
 kubectl \
   --namespace={{ .Release.Namespace }} \
-  run tcstore-sample --image={{ .Values.sampleTcStoreImage.repository }}:{{ .Values.tag }} \
+  run tcstore-sample --image={{ .Values.registry }}/{{ .Values.sampleTcStoreImage.name }}:{{ .Values.tag }} \
   --env="ACCEPT_EULA=Y" \
   --env="CLUSTER_NAME={{ template "terracotta.fullname" . }}" \
   --env="TERRACOTTA_SERVER_URL={{ template "terracotta.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"

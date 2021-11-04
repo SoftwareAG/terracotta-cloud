@@ -51,15 +51,12 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 $ helm install  --repo=https://softwareag.github.io/terracotta-cloud/
   --name=my-cluster \ 
   --namespace=terracotta \ 
-  --set tag=10.3.1-SNAPSHOT \ 
-  --set serverImage.repository=myrepo:443/terracotta/terracotta-server \ 
-  --set clusterToolImage.repository=myrepo:443/terracotta/terracotta-cluster-tool \
-  --set tmcImage.repository=myrepo:443/terracotta/tmc \ 
-  --set sampleEhCacheImage.repository=myrepo:443/terracotta/sample-ehcache-client \  
-  --set sampleTcStoreImage.repository=myrepo:443/terracotta/sample-tcstore-client \ 
+  --set tag=10.3.1-SNAPSHOT \
+  --set repository=myrepo:443 \
   --set-file licenseFile=~/Downloads/TerracottaDB101.xml    terracotta
 ```
 
+For a complete list of set options, see [values.yaml](values.yaml)
 
 Alternatively, a YAML file that specifies the values for the parameters can be provided while installing the chart. For example,
 

@@ -9,7 +9,7 @@ spec:
     spec:
       containers:
         - name: cluster-tool
-          image: "{{ .Values.clusterToolImage.repository }}:{{ .Values.tag }}"
+          image: "{{ .Values.registry }}/{{ .Values.clusterToolImage.name }}:{{ .Values.tag }}"
           imagePullPolicy: {{ .Values.pullPolicy | quote }}
           args: ["-t", "10000", "configure", "-n", "{{ template "terracotta.fullname" . }}", "/configs/tc-config.xml"]
           env:
