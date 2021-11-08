@@ -24,11 +24,13 @@ spec:
       affinity:
             {{ toYaml .Values.affinity | indent 8 }}
             {{- end }}
+      {{- if .Values.nodeSelector }}
       nodeSelector:
-        kubernetes.io/hostname: tc-bigmemory-14
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
       containers:
         - name: "{{ .Release.Name }}-tmc"
-          image: {{ .Values.tmcImage.repository }}:{{ .Values.tag }}
+          image: {{ .Values.registry }}/{{ .Values.tmcImage.name }}:{{ .Values.tag }}
           imagePullPolicy: {{ .Values.pullPolicy }}
           env:
             - name: TMS_OFFHEAPSIZEMB
@@ -48,7 +50,7 @@ spec:
             requests:
               memory: "4Gi"
         - name: readiness
-          image: "{{ .Values.clusterToolImage.repository }}:{{ .Values.tag }}"
+          image: "{{ .Values.registry }}/{{ .Values.clusterToolImage.name }}:{{ .Values.tag }}"
           imagePullPolicy: {{ .Values.pullPolicy | quote }}
           command: ["sh", "-c", "while true; do sleep 86400; done"]
           readinessProbe:
