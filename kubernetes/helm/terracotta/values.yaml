@@ -1,21 +1,23 @@
 tag: 10.3
 pullPolicy: Always
+registry: iregistry.eur.ad.sag
 #comment
 
+# Note: registry (above) is prepended to the names:
 serverImage:
-  repository: store/softwareag/terracotta-server
+  name: softwareag/terracotta-server
 
 clusterToolImage:
-  repository: store/softwareag/terracotta-cluster-tool
+  name: softwareag/terracotta-cluster-tool
 
 tmcImage:
-  repository: store/softwareag/tmc
+  name: softwareag/tmc
 
 sampleEhCacheImage:
-  repository: store/softwareag/sample-ehcache-client
+  name: store/softwareag/sample-ehcache-client
 
 sampleTcStoreImage:
-  repository: store/softwareag/sample-tcstore-client
+  name: softwareag/sample-tcstore-client
 
 website: "https://www.terracotta.org"
 
