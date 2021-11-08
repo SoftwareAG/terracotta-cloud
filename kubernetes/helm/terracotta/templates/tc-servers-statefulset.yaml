@@ -30,7 +30,7 @@ spec:
       {{- end }}
       containers:
       - name: {{ template "terracotta.fullname" . }}
-        image: "{{ .Values.serverImage.repository }}:{{ .Values.tag }}"
+        image: "{{ .Values.registry }}/{{ .Values.serverImage.name }}:{{ .Values.tag }}"
         imagePullPolicy: {{ .Values.pullPolicy | quote }}
         command: ["bin/start-tc-server.sh"]
         args: ["-f", "/configs/tc-config.xml", "-n", "$(POD_NAME)"]
@@ -52,7 +52,7 @@ spec:
         - name: ACCEPT_EULA
           value: "Y"
       - name: readiness
-        image: "{{ .Values.clusterToolImage.repository }}:{{ .Values.tag }}"
+        image: "{{ .Values.registry }}/{{ .Values.clusterToolImage.name }}:{{ .Values.tag }}"
         imagePullPolicy: {{ .Values.pullPolicy | quote }}
         command: ["sh", "-c", "while true; do sleep 86400; done"]
         readinessProbe:
