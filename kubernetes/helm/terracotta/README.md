@@ -21,7 +21,7 @@ This chart bootstraps a [Terracotta cluster](https://hub.docker.com/_/softwareag
 
 - Kubernetes 1.10+
 - Helm 2+
-- a license file you can get from http://www.terracotta.org/downloads/terracotta/
+- a license file you can get from https://tech.forums.softwareag.com/pub/terracotta-download-form
 
 ## Installing the Chart
 
