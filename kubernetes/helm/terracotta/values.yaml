@@ -1,4 +1,4 @@
-tag: 10.3
+tag: 10.11
 pullPolicy: Always
 registry: iregistry.eur.ad.sag
 #comment
@@ -26,6 +26,9 @@ website: "https://www.terracotta.org"
 
 
 replicaCount: 2
+
+# Start an activated stripe
+autoActivate: false
 
 # specify as many offheap resources as you want; provided you have enough resources on the node
 # and you have caching clients using those resources for their clustered tiers !

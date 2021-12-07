@@ -28,6 +28,20 @@ spec:
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       {{- end }}
+      initContainers:
+        - name: readiness
+          image: "{{ .Values.registry }}/{{ .Values.clusterToolImage.name }}:{{ .Values.tag }}"
+          imagePullPolicy: {{ .Values.pullPolicy | quote }}
+          command: ["bin/cluster-tool.sh"]
+          args: ["status", "-connect-to", "{{ template "terracotta.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"]
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
       containers:
         - name: "{{ .Release.Name }}-tmc"
           image: {{ .Values.registry }}/{{ .Values.tmcImage.name }}:{{ .Values.tag }}
@@ -49,25 +63,6 @@ spec:
               memory: "16Gi"
             requests:
               memory: "4Gi"
-        - name: readiness
-          image: "{{ .Values.registry }}/{{ .Values.clusterToolImage.name }}:{{ .Values.tag }}"
-          imagePullPolicy: {{ .Values.pullPolicy | quote }}
-          command: ["sh", "-c", "while true; do sleep 86400; done"]
-          readinessProbe:
-            exec:
-              command: ["bash", "-c", "bin/cluster-tool.sh -t 10000 status -n {{ template "terracotta.fullname" . }} -s {{ template "terracotta.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"]
-            initialDelaySeconds: 15
-            periodSeconds: 15
-            timeoutSeconds: 5
-            # 10,000 as failure threshold gives around 41 hours of time to load from FRS and start terracotta successfully.
-            failureThreshold: 10000
-          env:
-            - name: ACCEPT_EULA
-              value: "Y"
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
       {{- if .Values.imagePullSecrets }}
       imagePullSecrets:
 {{ toYaml .Values.imagePullSecrets | indent 8 }}
