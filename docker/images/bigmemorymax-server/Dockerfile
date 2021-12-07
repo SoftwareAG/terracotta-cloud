@@ -30,9 +30,7 @@ EXPOSE 9510 9530 9540
 # default values for offheap, that you can override when starting your container with docker run -e OFFHEAP_RESOURCE1_SIZE=512 for example
 ENV OFFHEAP_SIZE "2g"
 
-# make the JVM aware of the container memory constraints, since JDK 8u131
-# see https://blog.csanchez.org/2017/05/31/running-a-jvm-in-a-container-without-getting-killed
-ENV JAVA_OPTS "-Dcom.tc.productkey.path=$LICENSE_DIRECTORY/license.key -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+ENV JAVA_TOOL_OPTIONS "-Dcom.tc.productkey.path=$LICENSE_DIRECTORY/license.key"
 
 # the entrypoint needs to be run as root while setting up the config; it run the JVM process as sagadmin though
 USER root
