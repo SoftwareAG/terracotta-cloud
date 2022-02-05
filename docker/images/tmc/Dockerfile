@@ -3,7 +3,7 @@
 #
 # This Dockerfile defines an image including the Terracotta Management Console
 
-FROM iregistry.eur.ad.sag/ibit/ubi7:jdk8u212-ubi7.7-99_approved
+FROM iregistry.eur.ad.sag/ibit/ubi7:jdk8u282-ubi7.9-262_approved
 LABEL maintainers="Anthony Dahanne <anthony.dahanne@softwareag.com>"
 
 # SAG_HOME is defined to /opt/softwareag in the base image
