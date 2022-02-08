@@ -1,7 +1,7 @@
 # Copyright (c) 2011-2019 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or its subsidiaries and/or its affiliates and/or their licensors.
 # Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG
 
-FROM iregistry.eur.ad.sag/ibit/ubi7:jdk8u282-ubi7.9-262_approved
+FROM iregistry.eur.ad.sag/ibit/ubi8:jdk8u322-ubi8.5-218-minimal_approved
 LABEL maintainers="Abhilash <Abhilash.Abhilash@softwareag.com>"
 
 # SAG_HOME is defined to /opt/softwareag in the base image
@@ -27,6 +27,10 @@ ENV JAVA_OPTS "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
 
 # the entrypoint needs to be run as root while setting up the config; it run the JVM process as sagadmin though
 USER root
+
+# for su
+RUN microdnf install util-linux
+
 # Using exec form to avoid running as subcommand of `/bin/sh -c` which does not pass signals.
 # Reference: https://docs.docker.com/engine/reference/builder/#entrypoint
 ENTRYPOINT ["./entrypoint.sh"]

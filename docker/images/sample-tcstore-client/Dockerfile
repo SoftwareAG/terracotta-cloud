@@ -3,7 +3,7 @@
 #
 # This Dockerfile creates an image that can run as Terracotta TC Store client
 
-FROM iregistry.eur.ad.sag/ibit/ubi7:jdk8u282-ubi7.9-262_approved
+FROM iregistry.eur.ad.sag/ibit/ubi8:jdk8u322-ubi8.5-218-minimal_approved
 LABEL maintainers="Abhilash <Abhilash.Abhilash@softwareag.com>"
 
 # SAG_HOME is defined to /opt/softwareag in the base image
