@@ -3,12 +3,12 @@ entries:
   terracotta:
   - apiVersion: v1
     appVersion: "10.3"
-    created: "2022-02-08T15:39:30.73627119Z"
+    created: "2022-02-08T15:43:19.248031614Z"
     description: Terracotta Ehcache is an improved version of Java's de facto caching
       API, Ehcache. It has a powerful, streamlined, modernized caching API taking
       advantage of newer Java features as well as the capability to be used via the
       JSR-107 "JCache" API.
-    digest: 9d01a6a3b7258207c60e2a3b0b10ec72382459d958b3242519b1a20d47fa0b5f
+    digest: 61e985bab91f1c516427e1b23457a7cdcf8e00fa4b387056a2471615e05c4661
     home: http://www.terracotta.org/
     icon: http://www.terracotta.org/wp-content/themes/terracotta/library/images/logo.png
     keywords:
@@ -50,4 +50,4 @@ entries:
     urls:
     - terracotta-0.0.1.tgz
     version: 0.0.1
-generated: "2022-02-08T15:39:30.73366199Z"
+generated: "2022-02-08T15:43:19.246729605Z"
