@@ -3,8 +3,8 @@
 #
 # This Dockerfile defines an image that can run as Terracotta Server
 
-FROM iregistry.eur.ad.sag/ibit/ubi7:jdk8u282-ubi7.9-262_approved
-LABEL maintainers="Anthony Dahanne <anthony.dahanne@softwareag.com>"
+FROM iregistry.eur.ad.sag/ibit/ubi8:jdk8u322-ubi8.5-218-minimal_approved
+LABEL maintainers="Abhilash <Abhilash.Abhilash@softwareag.com>"
 
 # SAG_HOME is defined to /opt/softwareag in the base image
 COPY ./legal $SAG_HOME/legal
@@ -53,6 +53,9 @@ ENV JAVA_OPTS "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
 
 # the entrypoint needs to be run as root while setting up the config; it run the JVM process as sagadmin though
 USER root
+
+# for su
+RUN microdnf install util-linux
 
 # before starting the terracotta server, we update the tc-config.xml configuration file
 ENTRYPOINT ["./entrypoint.sh"]
