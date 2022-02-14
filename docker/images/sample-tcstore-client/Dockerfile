@@ -17,6 +17,11 @@ COPY client/ $SAG_HOME/client/
 COPY docker/images/sample-tcstore-client/src/ $SAG_HOME/
 COPY docker/images/sample-tcstore-client/entrypoint.sh $SAG_HOME/
 
+# Starting in 10.15, client libs don't have these 3rd-party libs, adding manually:
+# They are also copied to cluster-tool/, but we don't want everything on the CLASSPATH
+COPY tools/lib/slf4j*.jar $SAG_HOME/client/lib/
+COPY tools/lib/logback*.jar $SAG_HOME/client/lib/
+
 # cluster tool is necessary to check the status of the cluster before starting the client
 COPY tools/ $SAG_HOME/cluster-tool/
 
@@ -26,7 +31,7 @@ WORKDIR $SAG_HOME
 # make the JVM aware of the container memory constraints, since JDK 8u131
 # see https://blog.csanchez.org/2017/05/31/running-a-jvm-in-a-container-without-getting-killed
 ENV JAVA_OPTS "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-ENV CLASSPATH ".:/opt/softwareag/client/store/*:/opt/softwareag/client/ehcache/*:/opt/softwareag/client/lib/*:/opt/softwareag/client/logging/*:/opt/softwareag/client/logging/impl/*"
+ENV CLASSPATH ".:/opt/softwareag/client/ehcache/*:/opt/softwareag/client/lib/*:/opt/softwareag/client/logging/*:/opt/softwareag/client/logging/impl/*"
 
 ENV DATAROOT_RESOURCE_NAME "dataroot-2"
 ENV OFFHEAP_RESOURCE_NAME "offheap-2"
