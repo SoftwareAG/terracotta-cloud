@@ -1,6 +1,10 @@
 Terracotta Cloud Deployments
 ===============================
 
+## Deprecation Notice
+*This repository does not apply to terracotta 10.15 and later.  This branch is not used.  Dockerfiles have been moved to the primary codebase.*
+
+## Description
 You'll find in this repository all the information needed to run Terracotta on different cloud scenarios.
 
 * [AWS folder](aws/) : Documentation to help you get started running Terracotta directly on AWS
