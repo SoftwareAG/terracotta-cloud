@@ -12,7 +12,6 @@
                 <tsa-port>9510</tsa-port>
                 <tsa-group-port>9530</tsa-group-port>
                 <management-port>9540</management-port>
-                <logs>stdout:</logs>
                 <dataStorage size="OFFHEAP_SIZE">
                     <offheap size="OFFHEAP_SIZE"/>
                 </dataStorage>
@@ -21,7 +20,6 @@
                 <tsa-port>9510</tsa-port>
                 <tsa-group-port>9530</tsa-group-port>
                 <management-port>9540</management-port>
-                <logs>stdout:</logs>
                 <dataStorage size="OFFHEAP_SIZE">
                     <offheap size="OFFHEAP_SIZE"/>
                 </dataStorage>
@@ -31,8 +29,5 @@
         <restartable enabled="false"/>
     </servers>
 
-    <clients>
-        <logs>stdout:</logs>
-    </clients>
-
+    
 </tc:tc-config>

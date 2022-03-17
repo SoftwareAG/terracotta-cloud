@@ -23,6 +23,22 @@ fi
 sed -i -r 's/OFFHEAP_SIZE/'$OFFHEAP_SIZE'/' $CONFIGS_DIRECTORY/tc-config.xml \
   && sed -i -r 's/TC_SERVER1/'$TC_SERVER1'/g; s/TC_SERVER2/'$TC_SERVER2'/g' $CONFIGS_DIRECTORY/tc-config.xml
 
+# paste logback json libraries in JAVA_HOME/ext/lib folder
+# paste json formatter xml file in class path 
+if [ "$JSON_LOGGING" == "true" ]; then
+   echo "json logging enabled"
+   cp lib/slf4j-api-*.jar $JAVA_HOME/jre/lib/ext/.
+   cp lib/logback-classic-*.jar $JAVA_HOME/jre/lib/ext/.
+   cp lib/logback-core-*.jar $JAVA_HOME/jre/lib/ext/.
+   cp lib/jackson-core-*.jar $JAVA_HOME/jre/lib/ext/.
+   cp lib/jackson-annotations-*.jar $JAVA_HOME/jre/lib/ext/.
+   cp lib/jackson-databind-*.jar $JAVA_HOME/jre/lib/ext/.
+   cp logback-jackson-*.jar $JAVA_HOME/jre/lib/ext/.
+   cp logback-json-classic-*.jar $JAVA_HOME/jre/lib/ext/.
+   cp logback-json-core-*.jar $JAVA_HOME/jre/lib/ext/.
+   mv .tc.custom.logback.1.xml .tc.custom.logback.xml
+fi
+
 # Changing permission for sagadmin home directory.
 chown -R sagadmin:sagadmin $SAG_HOME
 

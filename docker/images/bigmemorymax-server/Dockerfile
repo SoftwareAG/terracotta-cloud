@@ -12,8 +12,12 @@ ADD https://confluence.terracotta.org/download/attachments/29557169/TAB_4.3.10_D
  $SAG_HOME/legal/TAB_4.3.10_Docker_terms.pdf
 
 COPY ./server/ $SAG_HOME/server/
-COPY docker/images/bigmemorymax-server/config/tc.custom.log4j.properties $SAG_HOME/server/.tc.custom.log4j.properties
+COPY docker/images/bigmemorymax-server/config/.tc.custom.logback.xml $SAG_HOME/server/.tc.custom.logback.1.xml
+COPY docker/images/bigmemorymax-server/config/logback-jackson-0.1.5.jar $SAG_HOME/server/.
+COPY docker/images/bigmemorymax-server/config/logback-json-classic-0.1.5.jar $SAG_HOME/server/.
+COPY docker/images/bigmemorymax-server/config/logback-json-core-0.1.5.jar $SAG_HOME/server/.
 COPY docker/images/bigmemorymax-server/entrypoint.sh $SAG_HOME/server/entrypoint.sh
+
 
 # /configs is an optional volume you can use to deploy configuration files
 ENV CONFIGS_DIRECTORY "/configs/"
@@ -21,6 +25,10 @@ VOLUME $CONFIGS_DIRECTORY
 
 ENV LICENSE_DIRECTORY "/licenses/"
 VOLUME $LICENSE_DIRECTORY
+
+ENV JSON_LOGGING "false"
+ENV ACCOUNT_ID ""
+ENV ENV_NAME ""
 
 # all below commands will now be relative to this path
 WORKDIR $SAG_HOME/server
