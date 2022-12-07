@@ -28,8 +28,7 @@ EXPOSE 9480
 # the tmc can let the user choose a default cluster url
 ENV TMS_DEFAULTURL "terracotta://terracotta:9410"
 # we disable logging to file, everything will be logged to stdout and stderr
-ENV LOGGING_FILE=''
-ENV LOGGING_PATH=''
+ENV LOGGING_FILE_NAME=''
 
 # make the JVM aware of the container memory constraints, since JDK 8u131
 # see https://blog.csanchez.org/2017/05/31/running-a-jvm-in-a-container-without-getting-killed
